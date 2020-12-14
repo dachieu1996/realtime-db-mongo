@@ -1,0 +1,9 @@
+<button (click)="onClickBack()" [disabled]="isDisabled" nz-button [nzType]="buttonType" class="mr-2">
+  <i nz-icon [nzType]="iconType" [nzTheme]="iconTheme" [nzIconfont]="iconFont" [nzSpin]="iconSpin"></i>
+  <ng-container *ngIf="text; else defaultText">
+    {{ text }}
+  </ng-container>
+  <ng-template #defaultText>
+    {{ 'layout.btn.prev' | translate }}
+  </ng-template>
+</button>

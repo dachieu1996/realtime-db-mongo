@@ -1,0 +1,140 @@
+<app-modal [visible]="visible" [loading]="loading" (onSave)="submit()" (onCancel)="handleCancel()"
+  title="{{ 'customer-manager.customer.create.list-of-customer' | translate }}">
+  <form nz-form [formGroup]="createForm">
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'customer-manager.customer.create.customer-name' | translate }}"
+          [required]="true" errorTip="{{ 'customer-manager.customer.create.customer-name.required' | translate }}"
+          formControlName="customerName">
+        </app-input-text>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'customer-manager.customer.create.customer-code' | translate }}"
+          [disabled]="true" errorTip="{{ '' | translate }}" formControlName="code">
+        </app-input-text>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-date-picker labelContent="{{ 'customer-manager.customer.create.date-of-birth' | translate }}"
+          formControlName="dob" [required]="true">
+        </app-date-picker>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'customer-manager.customer.create.number-of-paper' | translate }}"
+          formControlName="idCard">
+        </app-input-text>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <app-label-horizontal [span]="8" content="{{ 'customer-manager.customer.create.zip-code' | translate }}"
+            [required]="true">
+          </app-label-horizontal>
+          <nz-form-control [nzSpan]="16">
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn mã zip" formControlName="zipcode">
+              <nz-option *ngFor="let dataCustomer of listCustomer" nzLabel="{{dataCustomer.zipcode}}"
+                [nzValue]="dataCustomer.zipcode"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <app-label-horizontal [span]="8" content="{{ 'customer-manager.customer.create.type-of-paper' | translate }}">
+          </app-label-horizontal>
+          <nz-form-control [nzSpan]="16">
+            <nz-select formControlName="idType">
+              <nz-option nzValue="" nzLabel="Loại giấy tờ"></nz-option>
+              <nz-option nzValue="hochieu" nzLabel="Hộ chiếu"></nz-option>
+              <nz-option nzValue="ngoaikieu" nzLabel="Ngoại kiều"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'customer-manager.customer.create.permanent-address' | translate }}"
+          formControlName="address" [disabled]="true">
+        </app-input-text>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-date-picker labelContent="{{ 'customer-manager.customer.create.expiration-date' | translate }}"
+          formControlName="date" [required]="true">
+        </app-date-picker>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <!-- <app-input-text labelContent="{{ 'Zip code' | translate }}" formControlName="zipcode2">
+        </app-input-text> -->
+        <nz-form-item>
+          <app-label-horizontal [span]="8" content="{{ 'customer-manager.customer.create.zip-code' | translate }}">
+          </app-label-horizontal>
+          <nz-form-control [nzSpan]="16">
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn mã zip" formControlName="zipcode2">
+              <nz-option *ngFor="let dataCustomer of listCustomer" nzLabel="{{dataCustomer.zipcode}}"
+                [nzValue]="dataCustomer.zipcode"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'customer-manager.customer.create.company-school' | translate }}"
+          formControlName="schoolName">
+        </app-input-text>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'customer-manager.customer.create.temporary-address' | translate }}"
+          formControlName="address2" [disabled]="true">
+        </app-input-text>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'customer-manager.customer.create.job' | translate }}"
+          formControlName="occupation">
+        </app-input-text>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'customer-manager.customer.create.phone' | translate }}"
+          formControlName="phone">
+        </app-input-text>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-input-email labelContent="{{ 'customer-manager.customer.create.email' | translate }}"
+          formControlName="email">
+        </app-input-email>
+      </div>
+
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-input-textarea labelContent="{{ 'customer-manager.customer.create.note' | translate }}"
+          formControlName="note">
+        </app-input-textarea>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-switch labelContent="{{ 'customer-manager.customer.create.status' | translate }}" formControlName="status">
+        </app-switch>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="24">
+        <!-- <app-image-upload></app-image-upload> -->
+      </div>
+    </div>
+  </form>
+</app-modal>

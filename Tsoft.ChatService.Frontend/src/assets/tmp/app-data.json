@@ -1,0 +1,120 @@
+{
+  "app": {
+    "name": "Filenet",
+    "year": 2020,
+    "description": "Filenet"
+  },
+  "user": {
+    "name": "Admin",
+    "avatar": "./assets/tmp/img/avatar.jpg",
+    "email": "admin@savis.vn"
+  },
+  "menu": [{
+    "text": "Main menu",
+    "i18n": "menu.main",
+    "group": true,
+    "hideInBreadcrumb": true,
+    "children": [
+      {
+        "text": "Dashboard",
+        "i18n": "menu.dashboard",
+        "icon": "anticon anticon-dashboard",
+        "link": "/dashboard"
+      },
+      {
+        "text": "Sản xuất",
+        "i18n": "menu.production",
+        "icon": "anticon anticon-dashboard",
+        "group": true,
+        "children": [
+          {
+            "text": "Sản phẩm",
+            "i18n": "menu.production.product",
+            "icon": "anticon anticon-dashboard",
+            "link": "/product/template"
+          },
+          {
+            "text": "Quy trình sản xuất",
+            "i18n": "menu.production.routing",
+            "icon": "anticon anticon-dashboard",
+            "link": "/product/routing"
+          },
+          {
+            "text": "Định mức nguyên liệu",
+            "i18n": "menu.production.bom",
+            "icon": "anticon anticon-dashboard",
+            "link": "/product/bom"
+          },
+          {
+            "text": "Năng lực sản xuất",
+            "i18n": "menu.production.workcenter",
+            "icon": "anticon anticon-dashboard",
+            "link": "/product/workcenter"
+          },
+          {
+            "text": "Lệnh sản xuất",
+            "i18n": "menu.production.manufacture",
+            "icon": "anticon anticon-dashboard",
+            "link": "/product/manufacture"
+          }
+        ]
+      },
+      {
+        "text": "Quản trị hệ thống",
+        "i18n": "menu.system",
+        "icon": "anticon anticon-dashboard",
+        "group": true,
+        "children": [
+          {
+            "text": "Nhật ký hệ thống",
+            "i18n": "menu.system.tracking",
+            "icon": "anticon anticon-dashboard",
+            "link": "/system/tracking"
+          }
+        ]
+      },
+      {
+        "text": "StockWarehouse",
+        "i18n": "menu.stock-warehouse",
+        "icon": "anticon anticon-appstore-o",
+        "link": "/catalog/stock-warehouse"
+      },
+      {
+        "text": "StockLocation",
+        "i18n": "menu.stock-location",
+        "icon": "anticon anticon-appstore-o",
+        "link": "/catalog/stock-location"
+      },
+      {
+        "text": "Uomuom",
+        "i18n": "menu.uomuom",
+        "icon": "anticon anticon-appstore-o",
+        "link": "/uomuom"
+      },
+      {
+        "text": "Catalog",
+        "i18n": "menu.catalog",
+        "icon": "anticon anticon-appstore-o",
+        "link": "/catalog"
+      },
+      {
+        "text": "CatalogItem",
+        "i18n": "menu.catalogitem",
+        "icon": "anticon anticon-appstore-o",
+        "link": "/catalog/catalogitem"
+      },
+      {
+        "text": "MeatadataField",
+        "i18n": "menu.metadatafield",
+        "icon": "anticon anticon-appstore-o",
+        "link": "/catalog/metadatafield"
+      },
+      {
+        "text": "MeatadataTemplate",
+        "i18n": "menu.metadatatemplate",
+        "icon": "anticon anticon-appstore-o",
+        "link": "/catalog/metadatatemplate"
+      }
+    ]
+  }]
+}

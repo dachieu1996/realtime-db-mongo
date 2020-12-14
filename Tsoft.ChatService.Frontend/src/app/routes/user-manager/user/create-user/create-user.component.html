@@ -1,0 +1,63 @@
+<app-modal [visible]="visible" [loading]="loading" (onSave)="submit()" (onCancel)="handleCancel()"
+  title="Tạo tài khoản">
+  <form nz-form [formGroup]="createForm">
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="6">
+        <app-image-upload [removeImage]="visible" (onChangeImage)="onChangeImage($event)"></app-image-upload>
+      </div>
+      <div nz-col nzSpan="18">
+        <div nz-row [nzGutter]="18">
+          <div nz-col nzSpan="12">
+            <app-input-text labelContent="{{ 'user-manager.employee.create.username' | translate }}" [required]="true"
+              errorTip="{{ 'user-manager.employee.create.username.required' | translate }}" formControlName="userName">
+            </app-input-text>
+          </div>
+          <div nz-col nzSpan="12">
+            <app-input-email labelContent="{{ 'user-manager.employee.create.email' | translate }}" [required]="true"
+              errorTip="{{ 'user-manager.employee.create.email.required' | translate }}" formControlName="email">
+            </app-input-email>
+          </div>
+        </div>
+
+        <div nz-row [nzGutter]="18">
+          <div nz-col nzSpan="12">
+            <app-input-text labelContent="{{ 'user-manager.employee.create.name' | translate }}" [required]="true"
+              errorTip="{{ 'user-manager.employee.create.name.required' | translate }}" formControlName="name">
+            </app-input-text>
+          </div>
+          <div nz-col nzSpan="12" formGroupName="userDetail">
+            <nz-form-item>
+              <app-label-horizontal for="name" content="Giới tính">
+              </app-label-horizontal>
+              <nz-form-control [nzSpan]="16">
+                <nz-select formControlName="gender">
+                  <nz-option [nzValue]="0" nzLabel="Nữ"></nz-option>
+                  <nz-option [nzValue]="1" nzLabel="Nam"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="18">
+          <div nz-col nzSpan="12">
+            <app-input-text labelContent="{{ 'user-manager.employee.create.phone' | translate }}"
+              errorTip="{{ 'user-manager.employee.create.phone.validate' | translate }}" formControlName="phoneNumber">
+            </app-input-text>
+          </div>
+          <div nz-col nzSpan="12" formGroupName="userDetail">
+            <app-date-picker labelContent="{{ 'user-manager.employee.create.birthdate' | translate }}"
+              formControlName="birthdate"></app-date-picker>
+          </div>
+        </div>
+
+        <div nz-row [nzGutter]="18">
+          <div nz-col nzSpan="12" formGroupName="userDetail">
+            <app-input-text labelContent="{{ 'user-manager.employee.create.address' | translate }}"
+              formControlName="address">
+            </app-input-text>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</app-modal>

@@ -1,0 +1,8 @@
+<button (click)="handleClick()" [ngClass]="buttonClass" nz-button [nzType]="buttonType" [nzShape]="buttonShape"
+  class="mr-2" [disabled]="disabled">
+  <i *ngIf="iconType" [ngClass]="iconClass" nz-icon [nzType]="iconType" [nzTheme]="iconTheme" [nzIconfont]="iconFont"
+    [nzSpin]="iconSpin"></i>
+  <ng-container *ngIf="text">
+    {{ text }}
+  </ng-container>
+</button>

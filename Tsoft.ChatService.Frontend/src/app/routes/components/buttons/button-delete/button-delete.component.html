@@ -1,0 +1,13 @@
+<button [ngClass]="buttonClass" id="btnDelete" nz-button [nzType]="buttonType" [nzShape]="buttonShape"
+  [nz-popconfirm]="popConfirm" [disabled]="isDisabled" class="mr-2"
+  nzPopconfirmTitle="{{ confirmTitleI18n | translate }}" nzOkText="{{ confirmOkI18n | translate }}"
+  nzCancelText="{{ confirmCancelI18n | translate}}" (nzOnConfirm)="onDelete()">
+  <i [ngClass]="iconClass" nz-icon [nzType]="iconType" [nzTheme]="iconTheme" [nzIconfont]="iconFont"
+    [nzSpin]="iconSpin"></i>
+  <ng-container *ngIf="text != null; else defaultText">
+    {{ text }}
+  </ng-container>
+  <ng-template #defaultText>
+    {{ 'layout.btn.delete' | translate }}
+  </ng-template>
+</button>

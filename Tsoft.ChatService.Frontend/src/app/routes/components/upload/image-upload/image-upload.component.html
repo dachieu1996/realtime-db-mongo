@@ -1,0 +1,8 @@
+<nz-upload class="avatar-uploader" nzName="avatar" nzListType="picture-card" [nzShowUploadList]="false"
+  [nzBeforeUpload]="beforeUpload">
+  <ng-container *ngIf="!avatarUrl">
+    <i class="upload-icon" nz-icon></i>
+    <div class="ant-upload-text">{{ 'layout.btn.upload' | translate }}</div>
+  </ng-container>
+  <img *ngIf="avatarUrl" [src]="avatarUrl" style="width: 100%;height: 100%;object-fit: cover;" class="avatar" />
+</nz-upload>

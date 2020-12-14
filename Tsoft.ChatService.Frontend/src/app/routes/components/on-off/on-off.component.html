@@ -1,0 +1,23 @@
+<ng-container *ngIf="type === 'switch'">
+  <nz-switch [(ngModel)]="onOffModel" [nzCheckedChildren]="checkedTemplate" [nzDisabled]="disable"
+    (ngModelChange)="onOffModelChange.emit(onOffModel)" [nzUnCheckedChildren]="unCheckedTemplate"></nz-switch>
+  <ng-template #checkedTemplate>
+    <ng-container *ngIf="dataOnOff.nameOn else iconOn">{{ dataOnOff.nameOff | translate }}</ng-container>
+    <ng-template #iconOn><i nz-icon nzType="check"></i></ng-template>
+  </ng-template>
+  <ng-template #unCheckedTemplate>{{ dataOnOff.nameOff | translate }}</ng-template>
+</ng-container>
+
+<ng-container *ngIf="type === 'checkbox'">
+  <label nz-checkbox [(ngModel)]="onOffModel" (ngModelChange)="onOffModelChange.emit(onOffModel)"
+    [nzDisabled]="disable">
+    <nz-tag [nzColor]=" onOffModel ? colorCodeOn : colorCodeOff">
+      <span *ngIf="onOffModel else inActive">
+        {{ dataOnOff.nameOn | translate }} </span>
+      <ng-template #inActive>
+        <span>
+          {{ dataOnOff.nameOff  | translate }} </span>
+      </ng-template>
+    </nz-tag>
+  </label>
+</ng-container>

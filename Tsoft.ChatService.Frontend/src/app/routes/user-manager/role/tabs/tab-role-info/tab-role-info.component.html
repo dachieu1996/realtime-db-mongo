@@ -1,0 +1,33 @@
+<nz-card>
+  <form nz-form [formGroup]="createForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col nzSpan="24">
+        <div nz-row [nzGutter]="18">
+          <div nz-col nzSpan="12">
+            <app-input-text labelContent="{{ 'user-manager.role.create.name' | translate }}" [required]="true"
+              errorTip="{{ 'user-manager.role.create.name.required' | translate }}" formControlName="name">
+            </app-input-text>
+          </div>
+          <div nz-col nzSpan="12">
+            <app-input-text labelContent="{{ 'user-manager.role.create.code' | translate }}" [required]="true"
+              errorTip="{{ 'user-manager.role.create.code.required' | translate }}" formControlName="code">
+            </app-input-text>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="18">
+          <div nz-col nzSpan="12">
+            <app-input-text labelContent="{{ 'user-manager.role.create.note' | translate }}" formControlName="note">
+            </app-input-text>
+          </div>
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <app-switch labelContent="{{ 'user-manager.role.create.isActive' | translate }}"
+                formControlName="isActive">
+              </app-switch>
+            </nz-form-item>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</nz-card>
