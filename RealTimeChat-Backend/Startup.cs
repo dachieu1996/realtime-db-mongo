@@ -19,6 +19,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ChatApi.HubConfig;
 using Microsoft.OpenApi.Models;
+using AutoMapper;
 
 namespace ChatApi
 {
@@ -42,7 +43,7 @@ namespace ChatApi
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins("http://localhost:4200")
+                    builder => builder.WithOrigins("http://localhost:4200", "http://127.0.0.1:8080")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
@@ -60,6 +61,8 @@ namespace ChatApi
 
             services.AddControllers()
                 .AddNewtonsoftJson(options => options.UseMemberCasing());
+
+            services.AddAutoMapper(typeof(Startup));
         }
         #endregion
 
@@ -82,6 +85,8 @@ namespace ChatApi
                 c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "API (V 1.0)");
                 c.RoutePrefix = "swagger";
             });
+
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
