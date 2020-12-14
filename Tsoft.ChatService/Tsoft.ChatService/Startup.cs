@@ -31,8 +31,7 @@ namespace Tsoft.ChatService
         {
             services.AddControllers();
 
-            // dotnet ef --startup-project migrations add InitialDb 
-            // dotnet ef --startup-project database update --context DataContext
+            // Update-Database
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.RegisterChatServiceComponents(Configuration, connectionString);
             services.RegisterCommonServiceComponents(Configuration);

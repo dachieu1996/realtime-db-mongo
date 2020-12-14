@@ -6,6 +6,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="TSoft.Framework.ApiUtils" Version="1.1.0" />
 		<PackageReference Include="TSoft.Framework.Authentication" Version="1.1.0" />
 		<PackageReference Include="Tsoft.Framework.Common" Version="1.0.0" />
