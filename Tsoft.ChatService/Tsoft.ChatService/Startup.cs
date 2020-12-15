@@ -6,12 +6,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Hubs;
+using Tsoft.ChatService.Models;
 using TSoft.Framework.ApiUtils;
 using TSoft.Framework.Authentication;
 
@@ -42,7 +44,13 @@ namespace Tsoft.ChatService
             var appSettingsSection = Configuration.GetSection("tokens");
             services.RegisterAuthentication(appSettingsSection);
             #endregion authentication
+            services.Configure<ChatDatabaseSettings>(
+                Configuration.GetSection(nameof(ChatDatabaseSettings)));
 
+            services.AddSingleton<ChatDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ChatDatabaseSettings>>().Value);
+
+            services.AddSingleton<ApplicationUserService>();
             services.AddSignalR();
         }
 

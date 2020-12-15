@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Tsoft.ChatService.Hubs;
+using Tsoft.ChatService.Models;
 using Tsoft.Framework.Common;
 using TSoft.Framework.ApiUtils.Controllers;
 using TSoft.Framework.Authentication;
@@ -13,10 +16,13 @@ namespace Tsoft.ChatService.Controllers
     public class UserController : ApiControllerBase
     {
         private IUserService _userService;
-
-        public UserController(IUserService userService)
+        private readonly IHubContext<ChatHub> _hub;
+        private readonly ApplicationUserService _applicationUserService;
+        public UserController(IUserService userService, ApplicationUserService applicationUserService, IHubContext<ChatHub> hub)
         {
             _userService = userService;
+            _hub = hub;
+            _applicationUserService = applicationUserService;
         }
 
 
@@ -62,6 +68,9 @@ namespace Tsoft.ChatService.Controllers
             return await ExecuteFunction(async () =>
             {
                 var entity = AutoMapperUtils.AutoMap<UserRequestModel, User>(request);
+                var application = AutoMapperUtils.AutoMap<UserRequestModel, ApplicationUser>(request);
+                var result = _applicationUserService.Create(application);
+                _hub.Clients.All.SendAsync("adduser", result);
                 return await _userService.SaveAsync(entity, request.RoleIds, new Guid());
             });
         }

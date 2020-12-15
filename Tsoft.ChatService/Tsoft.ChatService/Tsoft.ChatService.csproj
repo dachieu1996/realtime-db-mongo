@@ -10,6 +10,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="MongoDB.Driver" Version="2.11.5" />
 		<PackageReference Include="TSoft.Framework.ApiUtils" Version="1.1.0" />
 		<PackageReference Include="TSoft.Framework.Authentication" Version="1.1.0" />
 		<PackageReference Include="Tsoft.Framework.Common" Version="1.0.0" />
