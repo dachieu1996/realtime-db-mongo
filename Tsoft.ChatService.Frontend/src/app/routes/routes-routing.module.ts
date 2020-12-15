@@ -1,3 +1,4 @@
+import { DashboardChatComponent } from './chat/dashboard-chat/dashboard-chat.component';
 import { CallbackComponent } from './callback/callback.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -15,14 +16,9 @@ const routes: Routes = [
     path: '',
     component: LayoutProComponent,
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
-        path: 'user-manager',
-        loadChildren: () => import('./user-manager/user-manager.module').then(m => m.UserManagerModule),
-      },
-      {
-        path: 'customer',
-        loadChildren: () => import('./customer-manager/customer-manager.module').then(m => m.CustomerManagerModule),
+        path: '',
+        loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule),
       },
 
       // Exception
