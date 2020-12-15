@@ -11,7 +11,7 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="TSoft.Framework.ApiUtils" Version="1.1.3" />
-		<PackageReference Include="TSoft.Framework.Authentication" Version="1.1.1" />
+		<PackageReference Include="TSoft.Framework.Authentication" Version="1.1.2" />
 		<PackageReference Include="Tsoft.Framework.Common" Version="1.0.0" />
 		<PackageReference Include="TSoft.Framework.DB" Version="1.0.3" />
 	</ItemGroup>
