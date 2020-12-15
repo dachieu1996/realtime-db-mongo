@@ -96,5 +96,6 @@ namespace Tsoft.ChatService.Controllers
                 return await _userService.AddRole(id, roleIds);
             });
         }
+        
     }
 }

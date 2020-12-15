@@ -1,0 +1,21 @@
+<nz-form-item>
+  <ng-container *ngIf="!hideLabel">
+    <app-label-vertical *ngIf="!labelHorizontal" [content]="labelContent" [required]="required">
+    </app-label-vertical>
+    <app-label-horizontal *ngIf="labelHorizontal" [content]="labelContent" [required]="required" [span]="24 - span">
+    </app-label-horizontal>
+  </ng-container>
+  <nz-form-control [nzSpan]="labelHorizontal ? span : null" [nzErrorTip]="errorTip">
+    <nz-select class="w-100" #select nzAllowClear [formControl]="ngControl.control" (nzOnSearch)="handleSearch($event)"
+      [nzDropdownRender]="openSearchModal ? footer : null" [nzPlaceHolder]="placeHolder" nzShowSearch nzHideUnMatched
+      [nzDisabled]="disabled" [(ngModel)]="value" (ngModelChange)="handleSelectChange()" [nzMode]="mode">
+      <nz-option *ngFor="let item of data" [nzValue]="item[valueField]" [nzLabel]="item[labelField]">
+      </nz-option>
+    </nz-select>
+    <ng-template #footer>
+      <div (click)="select.closeDropDown();  handleOpenSearch()" class="add-item">
+        <i nz-icon nzType="plus"></i> {{'component.base.select.search-more' | translate}}
+      </div>
+    </ng-template>
+  </nz-form-control>
+</nz-form-item>

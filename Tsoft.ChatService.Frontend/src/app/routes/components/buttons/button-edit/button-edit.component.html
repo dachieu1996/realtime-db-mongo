@@ -1,0 +1,11 @@
+<button [ngClass]="buttonClass" id="btnEdit" (click)="openEdit()" nz-button [nzType]="buttonType"
+  [nzShape]="buttonShape" [disabled]="isDisabled" class="mr-2">
+  <i [ngClass]="iconClass" nz-icon [nzType]="iconType" [nzTheme]="iconTheme" [nzIconfont]="iconFont"
+    [nzSpin]="iconSpin"></i>
+  <ng-container *ngIf="text != null; else defaultText">
+    {{ text }}
+  </ng-container>
+  <ng-template #defaultText>
+    {{ 'layout.btn.edit' | translate }}
+  </ng-template>
+</button>

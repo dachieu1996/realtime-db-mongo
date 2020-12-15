@@ -1,0 +1,9 @@
+<button (click)="save()" nz-button [nzType]="buttonType" class="mr-2" [disabled]="disabled" [nzLoading]="loading">
+  <i nz-icon [nzType]="iconType" [nzTheme]="iconTheme" [nzIconfont]="iconFont" [nzSpin]="iconSpin"></i>
+  <ng-container *ngIf="text; else defaultText">
+    {{ text }}
+  </ng-container>
+  <ng-template #defaultText>
+    {{ 'layout.btn.save' | translate }}
+  </ng-template>
+</button>

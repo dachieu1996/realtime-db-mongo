@@ -1,28 +1,35 @@
-﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Models;
 using Tsoft.ChatService.ViewModel;
 using Tsoft.Framework.Common;
+using TSoft.Framework.Authentication;
 
 namespace Tsoft.ChatService.Hubs
 {
+    [Authorize]
     public class ChatHub : Hub
     {
         public readonly static List<UserViewModel> _Connections = new List<UserViewModel>();
         public readonly static List<RoomViewModel> _Rooms = new List<RoomViewModel>();
         private readonly static Dictionary<string, string> _ConnectionsMap = new Dictionary<string, string>();
+        public static List<string> ListUsername { get; set; } = new List<string>();
 
 
         private readonly IMongoCollection<Message> _message;
         private readonly IMongoCollection<ApplicationUser> _users;
         private readonly IMongoCollection<Room> _room;
+        private IUserService _userSerivce;
 
-        public ChatHub(ChatDatabaseSettings settings)
+        public ChatHub(ChatDatabaseSettings settings, IUserService userSerivce)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
@@ -30,6 +37,7 @@ namespace Tsoft.ChatService.Hubs
             _message = database.GetCollection<Message>(settings.MessagesCollectionName);
             _users = database.GetCollection<ApplicationUser>(settings.UsersCollectionName);
             _room = database.GetCollection<Room>(settings.ConversationsCollectionName);
+            _userSerivce = userSerivce;
         }
         public async Task SendPrivate(string receiverName, string message)
         {
@@ -168,7 +176,7 @@ namespace Tsoft.ChatService.Hubs
             try
             {
                 // Delete from database
-                var room = _room.FindOneAndDelete(r => r.Name == roomName );
+                var room = _room.FindOneAndDelete(r => r.Name == roomName);
 
                 // Delete from list
                 var roomViewModel = _Rooms.First(r => r.Name == roomName);
@@ -235,14 +243,31 @@ namespace Tsoft.ChatService.Hubs
         {
             get { return Context.User.Identity.Name; }
         }
-        public override  Task OnConnectedAsync()
+        public async Task GetUserConnect()
+        {
+            var identity = (ClaimsIdentity)Context.User.Identity;
+            var userId = identity.FindFirst("Id")?.Value;
+            var user = _userSerivce.GetById(Guid.Parse(userId)).Result;
+            var userViewModel = new UserViewModel();
+            //var userViewModel = AutoMapperUtils.AutoMap<ApplicationUser, UserViewModel>(user);
+            userViewModel.Avatar = user.AvatarUrl;
+            userViewModel.Username = user.Username;
+            userViewModel.Fullname = user.Fullname;
+            userViewModel.Device = GetDevice();
+            userViewModel.CurrentRoom = "";
+            _Connections.Add(userViewModel);
+            await Clients.All.SendAsync("userConnection", _Connections);
+        }
+        public override Task OnConnectedAsync()
         {
             try
             {
-                var user = _users.Find(u => u.Username == IdentityName).FirstOrDefault();
+                var identity = (ClaimsIdentity)Context.User.Identity;
+                var userId = identity.FindFirst("Id")?.Value;
+                var user = _userSerivce.GetById(Guid.Parse(userId)).Result;
                 var userViewModel = new UserViewModel();
                 //var userViewModel = AutoMapperUtils.AutoMap<ApplicationUser, UserViewModel>(user);
-                userViewModel.Avatar = user.Avatar;
+                userViewModel.Avatar = user.AvatarUrl;
                 userViewModel.Username = user.Username;
                 userViewModel.Fullname = user.Fullname;
                 userViewModel.Device = GetDevice();
@@ -250,11 +275,14 @@ namespace Tsoft.ChatService.Hubs
 
                 if (!_Connections.Any(u => u.Username == IdentityName))
                 {
+
+
+                     ListUsername.Add(user.Username);
                     _Connections.Add(userViewModel);
                     _ConnectionsMap.Add(IdentityName, Context.ConnectionId);
                 }
 
-                Clients.Caller.SendAsync("getProfileInfo", user.Fullname, user.Avatar);
+                Clients.Caller.SendAsync("getProfileInfo", user.Fullname, user.AvatarUrl);
             }
             catch (Exception ex)
             {

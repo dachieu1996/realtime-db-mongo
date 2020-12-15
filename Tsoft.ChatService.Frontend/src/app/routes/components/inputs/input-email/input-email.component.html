@@ -1,0 +1,7 @@
+<nz-form-item>
+  <app-label-horizontal [content]="labelContent" [required]="required" [span]="24 - span">
+  </app-label-horizontal>
+  <nz-form-control [nzSpan]="span" [nzErrorTip]="errorTip">
+    <input [formControl]="ngControl.control" type="email" email nz-input/>
+  </nz-form-control>
+</nz-form-item>

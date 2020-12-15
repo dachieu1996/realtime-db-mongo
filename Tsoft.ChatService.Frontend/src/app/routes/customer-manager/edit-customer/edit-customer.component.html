@@ -1,0 +1,126 @@
+<app-modal [visible]="visible" (onSave)="submit()" [isEdit]="isEdit" (onCancel)="handleCancel()" (onEdit)="onEdit()"
+  (openModal)="openModal()" title="Danh mục khách hàng">
+  <form nz-form [formGroup]="editForm">
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'Tên khách hàng' | translate }}" [required]="true"
+          errorTip="{{ 'user-manager.employee.create.username.required' | translate }}" formControlName="customerName">
+        </app-input-text>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'customer-manager.customer.create.customer-code' | translate }}"
+          [disabled]="true" errorTip="{{ '' | translate }}" formControlName="cust_Id">
+        </app-input-text>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-date-picker labelContent="{{ 'customer-manager.customer.create.date-of-birth' | translate }}"
+          [required]="true" formControlName="dob">
+        </app-date-picker>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'Số giấy tờ' | translate }}" formControlName="idCard">
+        </app-input-text>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <app-label-horizontal [span]="8" content="{{ 'Zip code' | translate }}" [required]="true">
+          </app-label-horizontal>
+          <nz-form-control [nzSpan]="16">
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn mã zip" formControlName="zipcode">
+              <nz-option *ngFor="let dataCustomer of listCustomer" nzLabel="{{dataCustomer.zipcode}}"
+                [nzValue]="dataCustomer.zipcode"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <app-label-horizontal [span]="8" content="{{ 'Loại giấy tờ' | translate }}"></app-label-horizontal>
+          <nz-form-control [nzSpan]="16">
+            <nz-select formControlName="idType">
+              <nz-option nzValue="" nzLabel="Loại giấy tờ"></nz-option>
+              <nz-option nzValue="hochieu" nzLabel="Hộ chiếu"></nz-option>
+              <nz-option nzValue="ngoaikieu" nzLabel="Ngoại kiều"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'Địa chỉ thường trú' | translate }}" formControlName="address"
+          [disabled]="true">
+        </app-input-text>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-date-picker labelContent="{{ 'Ngày hết hạn' | translate }}" formControlName="date" [required]="true">
+        </app-date-picker>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <app-label-horizontal [span]="8" content="{{ 'Zip code' | translate }}"></app-label-horizontal>
+          <nz-form-control [nzSpan]="16">
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn mã zip" formControlName="zipcode2">
+              <nz-option *ngFor="let dataCustomer of listCustomer" nzLabel="{{dataCustomer.zipcode}}"
+                [nzValue]="dataCustomer.zipcode"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'Tên công ty/ Trường học' | translate }}" formControlName="schoolName">
+        </app-input-text>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'Địa chỉ tạm trú' | translate }}" formControlName="address2" [disabled]="true">
+        </app-input-text>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'Nghề nghiệp' | translate }}" formControlName="occupation">
+        </app-input-text>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-input-text labelContent="{{ 'Số điện thoại' | translate }}" formControlName="phone">
+        </app-input-text>
+      </div>
+      <div nz-col nzSpan="12">
+        <!-- <app-input-email labelContent="{{ 'Email' | translate }}" formControlName="email">
+        </app-input-email> -->
+      </div>
+
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="12">
+        <app-input-textarea labelContent="{{ 'Ghi chú' | translate }}" formControlName="note">
+        </app-input-textarea>
+      </div>
+      <div nz-col nzSpan="12">
+        <app-switch labelContent="{{ 'Trạng thái' | translate }}" formControlName="status">
+        </app-switch>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="24">
+        <!-- <app-image-upload></app-image-upload> -->
+      </div>
+    </div>
+  </form>
+</app-modal>

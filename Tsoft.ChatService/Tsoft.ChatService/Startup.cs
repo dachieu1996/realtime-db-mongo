@@ -31,6 +31,16 @@ namespace Tsoft.ChatService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                    builder.SetIsOriginAllowed(_ => true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
             services.AddControllers();
 
             // Update-Database
@@ -62,8 +72,8 @@ namespace Tsoft.ChatService
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwaggerConfig(Configuration);
             app.UseCommonConfig();
+            app.UseSwaggerConfig(Configuration);
 
             app.UseEndpoints(endpoints =>
             {
