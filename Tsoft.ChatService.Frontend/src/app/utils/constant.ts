@@ -330,6 +330,7 @@ export const WORKFLOW_SCHEME = {
   },
 };
 export const PHONE_NUMBER_REGEX = /^[0-9\.\-\/\+\(\)\s]+$/;
+export const EMAIL_REGEX = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/;
 // export const FAX_REGEX = /^\+?[0-9]{6,}$/;
 export const FAX_REGEX = /^[0-9\.\-\/\+\(\)\s]+$/;
 export const ERROR_MESSAGE = {

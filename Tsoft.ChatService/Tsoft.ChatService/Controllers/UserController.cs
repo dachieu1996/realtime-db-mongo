@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Hubs;
@@ -89,7 +90,7 @@ namespace Tsoft.ChatService.Controllers
 
         [HttpPost("add-role")]
         //[AppAuthorize(PermissionTypes.Any, PermissionRule.view_home)]
-        public async Task<IActionResult> AddRole(Guid id, [FromBody] Guid[] roleIds)
+        public async Task<IActionResult> AddRole(Guid id, [FromBody] List<Guid> roleIds)
         {
             return await ExecuteFunction(async () =>
             {

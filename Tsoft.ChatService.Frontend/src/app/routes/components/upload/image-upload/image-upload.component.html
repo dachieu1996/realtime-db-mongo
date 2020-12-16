@@ -4,5 +4,6 @@
     <i class="upload-icon" nz-icon></i>
     <div class="ant-upload-text">{{ 'layout.btn.upload' | translate }}</div>
   </ng-container>
-  <img *ngIf="avatarUrl" [src]="avatarUrl" style="width: 100%;height: 100%;object-fit: cover;" class="avatar" />
+  <img *ngIf="avatarUrl" [src]="avatarUrl" style="object-fit: cover;" [style.width.%]="width" [style.height.px]="height"
+    class="avatar" />
 </nz-upload>

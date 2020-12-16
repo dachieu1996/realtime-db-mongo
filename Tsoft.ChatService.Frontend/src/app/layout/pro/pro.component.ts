@@ -189,6 +189,12 @@ export class LayoutProComponent implements OnInit, AfterViewInit, OnDestroy {
         code: 'menu.dashboard',
         iconClass: 'anticon anticon-dashboard',
         urlRewrite: '',
+      },
+      {
+        name: 'Đăng ký',
+        code: 'menu.user-manager.create-user',
+        iconClass: 'anticon anticon-database',
+        urlRewrite: 'user-manager/user-managers/create-user',
       }
     ];
     const rootMenu = [

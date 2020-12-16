@@ -8,6 +8,8 @@ import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@
   styleUrls: ['./image-upload.component.less']
 })
 export class ImageUploadComponent implements OnInit {
+  @Input('width') width = 100;
+  @Input('height') height;
   @Input('avatarUrl') avatarUrl: string;
   @Input('removeImage') removeImage: boolean = false;
   @Output('onChangeImage') onChangeImage = new EventEmitter<File>();

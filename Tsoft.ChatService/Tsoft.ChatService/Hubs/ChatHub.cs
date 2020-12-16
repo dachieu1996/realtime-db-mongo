@@ -271,7 +271,13 @@ namespace Tsoft.ChatService.Hubs
         }
         private string IdentityName
         {
-            get { return Context.User.Identity.Name; }
+
+            get {
+                var identity = (ClaimsIdentity)Context.User.Identity;
+                var userName = identity.FindFirst("Username")?.Value;
+                return userName;
+            }
+            
         }
         private string IdentityId
         {

@@ -20,7 +20,10 @@ const routes: Routes = [
         path: '',
         loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule),
       },
-
+      {
+        path: 'user-manager',
+        loadChildren: () => import('./user-manager/user-manager.module').then(m => m.UserManagerModule),
+      },
       // Exception
       {
         path: 'exception',
