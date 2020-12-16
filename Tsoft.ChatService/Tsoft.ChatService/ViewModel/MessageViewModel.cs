@@ -11,6 +11,6 @@ namespace Tsoft.ChatService.ViewModel
         public string Timestamp { get; set; }
         public string From { get; set; }
         public string To { get; set; }
-        public string Avatar { get; set; }
+        public string AvatarUrl { get; set; }
     }
 }

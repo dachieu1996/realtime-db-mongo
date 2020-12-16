@@ -13,7 +13,7 @@ namespace Tsoft.ChatService.ViewModel
     }
     public class UserMessage
     {
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
         public string Name { get; set; }
         public string MessageId { get; set; }
         public string Content { get; set; }

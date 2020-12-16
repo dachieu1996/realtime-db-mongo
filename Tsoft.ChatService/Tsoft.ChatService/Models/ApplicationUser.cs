@@ -10,12 +10,13 @@ namespace Tsoft.ChatService.Models
 {
     public class ApplicationUser
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Fullname { get; set; }
         public string Username { get; set; }
-        public string Avatar { get; set; }
-
+        public string AvatarUrl { get; set; }
+        public DateTime? CreatedOnDate { get; set; }
+        public DateTime? LastModifiedOnDate { get; set; }
+        public Guid? CreatedByUserId { get; set; }
+        public Guid? LastModifiedByUserId { get; set; }
     }
 }

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -12,6 +11,7 @@ using Tsoft.ChatService.Models;
 using Tsoft.ChatService.ViewModel;
 using Tsoft.Framework.Common;
 using TSoft.Framework.Authentication;
+using Status = Tsoft.ChatService.ViewModel.Status;
 
 namespace Tsoft.ChatService.Hubs
 {
@@ -21,23 +21,34 @@ namespace Tsoft.ChatService.Hubs
         public readonly static List<UserViewModel> _Connections = new List<UserViewModel>();
         public readonly static List<RoomViewModel> _Rooms = new List<RoomViewModel>();
         private readonly static Dictionary<string, string> _ConnectionsMap = new Dictionary<string, string>();
-        public static List<string> ListUsername { get; set; } = new List<string>();
-
+        private static bool _firstLoad = false;
 
         private readonly IMongoCollection<Message> _message;
         private readonly IMongoCollection<ApplicationUser> _users;
         private readonly IMongoCollection<Room> _room;
+
         private IUserService _userSerivce;
 
         public ChatHub(ChatDatabaseSettings settings, IUserService userSerivce)
         {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
+                var client = new MongoClient(settings.ConnectionString);
+                var database = client.GetDatabase(settings.DatabaseName);
 
-            _message = database.GetCollection<Message>(settings.MessagesCollectionName);
-            _users = database.GetCollection<ApplicationUser>(settings.UsersCollectionName);
-            _room = database.GetCollection<Room>(settings.ConversationsCollectionName);
-            _userSerivce = userSerivce;
+                _message = database.GetCollection<Message>(settings.MessagesCollectionName);
+                _users = database.GetCollection<ApplicationUser>(settings.UsersCollectionName);
+                _room = database.GetCollection<Room>(settings.ConversationsCollectionName);
+                _userSerivce = userSerivce;
+
+            if (_firstLoad == false)
+            {
+                var userVM = AutoMapperUtils.AutoMap<ApplicationUser, UserViewModel>(_users.Find(x => true).ToList());
+                foreach (var user in userVM)
+                {
+                    user.Status = Status.OFFLINE;
+                    _Connections.Add(user);
+                }
+                _firstLoad = true;
+            }
         }
         public async Task SendPrivate(string receiverName, string message)
         {
@@ -53,7 +64,7 @@ namespace Tsoft.ChatService.Hubs
                     {
                         Content = Regex.Replace(message, @"(?i)<(?!img|a|/a|/img).*?>", string.Empty),
                         From = sender.Fullname,
-                        Avatar = sender.Avatar,
+                        AvatarUrl = sender.AvatarUrl,
                         To = "",
                         Timestamp = DateTime.Now.ToLongTimeString()
                     };
@@ -83,9 +94,13 @@ namespace Tsoft.ChatService.Hubs
                     };
                     _message.InsertOne(msg);
 
+                    var update = Builders<Room>.Update
+                        .Set("LastActivityTime", msg.Timestamp);
+                    _room.UpdateOne(x => x.Id == room.Id, update);
+
                     // Broadcast the message
                     var messageViewModel = new MessageViewModel();
-                    messageViewModel.Avatar = user.Avatar;
+                    messageViewModel.AvatarUrl = user.AvatarUrl;
                     messageViewModel.Content = msg.Content;
                     messageViewModel.From = user.Username;
                     messageViewModel.To = room.Name;
@@ -195,7 +210,17 @@ namespace Tsoft.ChatService.Hubs
         }
         public IEnumerable<RoomViewModel> GetRooms()
         {
-            var rooms = _room.Find(room => true).ToList();
+            //var a = new List<string>();
+            //a.Add(IdentityId);
+            //var newGroupRoom = new Room
+            //{
+            //    Name = "Tsof1t",
+            //    Type = RoomType.GROUP,
+            //    Participants = a
+            //};
+            //_room.InsertOne(newGroupRoom);
+
+            var rooms = _room.Find(room => room.Participants.Contains(IdentityId) && room.Type != RoomType.PRIVATE).ToList();
             if (_Rooms.Count == 0)
             {
                 foreach (var room in rooms)
@@ -208,6 +233,11 @@ namespace Tsoft.ChatService.Hubs
             }
 
             return _Rooms.ToList();
+        }
+
+        public IEnumerable<UserViewModel> GetAllUsers()
+        {
+            return _Connections.ToList();
         }
 
         public IEnumerable<UserViewModel> GetUsers(string roomName)
@@ -243,46 +273,37 @@ namespace Tsoft.ChatService.Hubs
         {
             get { return Context.User.Identity.Name; }
         }
-        public async Task GetUserConnect()
+        private string IdentityId
         {
-            var identity = (ClaimsIdentity)Context.User.Identity;
-            var userId = identity.FindFirst("Id")?.Value;
-            var user = _userSerivce.GetById(Guid.Parse(userId)).Result;
-            var userViewModel = new UserViewModel();
-            //var userViewModel = AutoMapperUtils.AutoMap<ApplicationUser, UserViewModel>(user);
-            userViewModel.Avatar = user.AvatarUrl;
-            userViewModel.Username = user.Username;
-            userViewModel.Fullname = user.Fullname;
-            userViewModel.Device = GetDevice();
-            userViewModel.CurrentRoom = "";
-            _Connections.Add(userViewModel);
-            await Clients.All.SendAsync("userConnection", _Connections);
+            get
+            {
+                var identity = (ClaimsIdentity)Context.User.Identity;
+                return identity.FindFirst("Id")?.Value;
+            }
         }
+
         public override Task OnConnectedAsync()
         {
             try
             {
-                var identity = (ClaimsIdentity)Context.User.Identity;
-                var userId = identity.FindFirst("Id")?.Value;
-                var user = _userSerivce.GetById(Guid.Parse(userId)).Result;
                 var userViewModel = new UserViewModel();
-                //var userViewModel = AutoMapperUtils.AutoMap<ApplicationUser, UserViewModel>(user);
-                userViewModel.Avatar = user.AvatarUrl;
-                userViewModel.Username = user.Username;
-                userViewModel.Fullname = user.Fullname;
-                userViewModel.Device = GetDevice();
-                userViewModel.CurrentRoom = "";
-
-                if (!_Connections.Any(u => u.Username == IdentityName))
+                if (!_Connections.Any(u => u.Id == IdentityId))
                 {
-
-
-                     ListUsername.Add(user.Username);
+                    var user = _userSerivce.GetById(Guid.Parse(IdentityId)).Result;
+                    userViewModel = AutoMapperUtils.AutoMap<User, UserViewModel>(user);
+                    userViewModel.Device = GetDevice();
+                    userViewModel.CurrentRoom = "";
+                    userViewModel.Status = Status.ONLINE;
                     _Connections.Add(userViewModel);
-                    _ConnectionsMap.Add(IdentityName, Context.ConnectionId);
                 }
-
-                Clients.Caller.SendAsync("getProfileInfo", user.Fullname, user.AvatarUrl);
+                else
+                {
+                    userViewModel = _Connections.FirstOrDefault(u => u.Id == IdentityId);
+                    userViewModel.Status = Status.ONLINE;
+                    userViewModel.Device = GetDevice();
+                }
+                //_ConnectionsMap.Add(IdentityId, Context.ConnectionId);
+                Clients.Others.SendAsync(Action.USER_ONLINE, userViewModel);
             }
             catch (Exception ex)
             {
@@ -301,7 +322,7 @@ namespace Tsoft.ChatService.Hubs
                 Clients.OthersInGroup(user.CurrentRoom).SendAsync("removeUser", user);
 
                 // Remove mapping
-                _ConnectionsMap.Remove(user.Username);
+                //_ConnectionsMap.Remove(user.Username);
             }
             catch (Exception ex)
             {
@@ -318,5 +339,10 @@ namespace Tsoft.ChatService.Hubs
 
             return "Web";
         }
+    }
+
+    public static class Action
+    {
+        public static string USER_ONLINE = "userOnline";
     }
 }

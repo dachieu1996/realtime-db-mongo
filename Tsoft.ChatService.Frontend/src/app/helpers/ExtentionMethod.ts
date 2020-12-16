@@ -70,3 +70,11 @@ export const formatPhoneNumber = function (phone) {
   phone = setPhone.join(' ');
   return phone;
 }
+
+export const AccendingSort = function (date1, date2) {
+  return Date.parse(date1) - Date.parse(date2)
+}
+
+export const DescendingSort = function (date1, date2) {
+  return Date.parse(date2) - Date.parse(date1)
+}

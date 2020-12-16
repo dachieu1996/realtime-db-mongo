@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { environment } from '@env/environment';
 import { Inject, Injectable } from '@angular/core';
@@ -8,6 +9,7 @@ export class ChatHubService {
 
   private connectionIsEstablished = false;
   private _hubConnection: HubConnection;
+  public startedEvent$ = new BehaviorSubject(null);
 
   constructor(
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
@@ -19,6 +21,14 @@ export class ChatHubService {
 
   sendMessage(message) {
     this._hubConnection.invoke('NewMessage', message);
+  }
+
+  getRooms() {
+    return this._hubConnection.invoke('GetRooms');
+  }
+
+  getAllUsers() {
+    return this._hubConnection.invoke('GetAllUsers');
   }
 
   private createConnection() {
@@ -33,6 +43,7 @@ export class ChatHubService {
       .then(() => {
         this.connectionIsEstablished = true;
         console.log('Hub connection started');
+        this.startedEvent$.next('Hub connection started');
       })
       .catch(err => {
         console.log('Error while establishing connection, retrying...');
