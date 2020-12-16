@@ -12,11 +12,12 @@ using Tsoft.ChatService.ViewModel;
 using Tsoft.Framework.Common;
 using TSoft.Framework.Authentication;
 using Status = Tsoft.ChatService.ViewModel.Status;
+using Tsoft.ChatService.Hubs.Interfaces;
 
 namespace Tsoft.ChatService.Hubs
 {
-    [Authorize]
-    public class ChatHub : Hub
+
+    public class ChatHub : Hub, IChatHub
     {
         public readonly static List<UserViewModel> _Connections = new List<UserViewModel>();
         public readonly static List<RoomViewModel> _Rooms = new List<RoomViewModel>();
@@ -31,13 +32,12 @@ namespace Tsoft.ChatService.Hubs
 
         public ChatHub(ChatDatabaseSettings settings, IUserService userSerivce)
         {
-                var client = new MongoClient(settings.ConnectionString);
-                var database = client.GetDatabase(settings.DatabaseName);
-
-                _message = database.GetCollection<Message>(settings.MessagesCollectionName);
-                _users = database.GetCollection<ApplicationUser>(settings.UsersCollectionName);
-                _room = database.GetCollection<Room>(settings.ConversationsCollectionName);
-                _userSerivce = userSerivce;
+            var client = new MongoClient(settings.ConnectionString);
+            var database = client.GetDatabase(settings.DatabaseName);
+            _message = database.GetCollection<Message>(settings.MessagesCollectionName);
+            _users = database.GetCollection<ApplicationUser>(settings.UsersCollectionName);
+            _room = database.GetCollection<Room>(settings.ConversationsCollectionName);
+            _userSerivce = userSerivce;
 
             if (_firstLoad == false)
             {
@@ -124,13 +124,13 @@ namespace Tsoft.ChatService.Hubs
                     if (!string.IsNullOrEmpty(user.CurrentRoom))
                         await Clients.OthersInGroup(user.CurrentRoom).SendAsync("removeUser", user);
 
-                    // Join to new chat room
+                    // Join to new cha  t room
                     await Leave(user.CurrentRoom);
                     await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
                     user.CurrentRoom = roomName;
 
                     // Tell others to update their list of users
-                    await Clients.OthersInGroup(roomName).SendAsync("addUser", user);
+                    //await Clients.OthersInGroup(roomName).SendAsync(Action.ADD_USER, user);
                 }
             }
             catch (Exception ex)
@@ -272,12 +272,13 @@ namespace Tsoft.ChatService.Hubs
         private string IdentityName
         {
 
-            get {
+            get
+            {
                 var identity = (ClaimsIdentity)Context.User.Identity;
                 var userName = identity.FindFirst("Username")?.Value;
                 return userName;
             }
-            
+
         }
         private string IdentityId
         {
@@ -322,10 +323,10 @@ namespace Tsoft.ChatService.Hubs
             try
             {
                 var user = _Connections.Where(u => u.Username == IdentityName).First();
-                _Connections.Remove(user);
+                user.Status = Status.OFFLINE;
 
                 // Tell other users to remove you from their list
-                Clients.OthersInGroup(user.CurrentRoom).SendAsync("removeUser", user);
+                Clients.Others.SendAsync(Action.USER_OFFLINE, user);
 
                 // Remove mapping
                 //_ConnectionsMap.Remove(user.Username);
@@ -345,10 +346,19 @@ namespace Tsoft.ChatService.Hubs
 
             return "Web";
         }
+
+        public async Task CreateUser(ApplicationUser user)
+        {
+            _users.InsertOne(user);
+            var userVM = AutoMapperUtils.AutoMap<ApplicationUser, UserViewModel>(user);
+            _Connections.Add(userVM);
+        }
     }
 
     public static class Action
     {
         public static string USER_ONLINE = "userOnline";
+        public static string USER_OFFLINE = "userOffline";
+        public static string ADD_USER = "addUser";
     }
 }

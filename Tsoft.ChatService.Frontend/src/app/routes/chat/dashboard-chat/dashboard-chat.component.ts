@@ -31,9 +31,25 @@ export class DashboardChatComponent implements OnInit {
         this.fetchRoomsAndUser();
     })
 
-    // this.chatHubService.getRooms().then(response => {
-    //   console.log(response);
-    // })
+    this.chatHubService.addUserEvent$.subscribe(data => {
+      if (data && this.users) {
+        this.users = [...this.users, data];
+        this.users$.next(this.users);
+      }
+    })
+
+    this.chatHubService.userOnlineEvent$.subscribe(data => {
+      if (data && this.users) {
+        let index = this.users.findIndex(x => x.id == data.id);
+        this.users[index] = data;
+        this.users = [...this.users];
+        this.users$.next(this.users);
+      }
+    })
+
+    this.chatHubService.getRooms().then(response => {
+      console.log(response);
+    })
   }
 
   async fetchRoomsAndUser() {

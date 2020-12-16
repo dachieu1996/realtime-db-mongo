@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Hubs;
+using Tsoft.ChatService.Hubs.Interfaces;
 using Tsoft.ChatService.Models;
 using TSoft.Framework.ApiUtils;
 using TSoft.Framework.Authentication;
@@ -59,6 +60,8 @@ namespace Tsoft.ChatService
 
             services.AddSingleton<ChatDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ChatDatabaseSettings>>().Value);
+
+            services.AddTransient<IChatHub, ChatHub>();
 
             services.AddSingleton<ApplicationUserService>();
             services.AddSignalR();

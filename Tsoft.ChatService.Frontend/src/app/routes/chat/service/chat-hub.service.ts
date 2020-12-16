@@ -10,6 +10,8 @@ export class ChatHubService {
   private connectionIsEstablished = false;
   private _hubConnection: HubConnection;
   public startedEvent$ = new BehaviorSubject(null);
+  public addUserEvent$ = new BehaviorSubject(null);
+  public userOnlineEvent$ = new BehaviorSubject(null);
 
   constructor(
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
@@ -44,6 +46,8 @@ export class ChatHubService {
         this.connectionIsEstablished = true;
         console.log('Hub connection started');
         this.startedEvent$.next('Hub connection started');
+        this.listenAddUser();
+        this.listenUserOnline();
       })
       .catch(err => {
         console.log('Error while establishing connection, retrying...');
@@ -54,6 +58,20 @@ export class ChatHubService {
   private registerOnServerEvents(): void {
     this._hubConnection.on('MessageReceived', (data: any) => {
 
+    });
+  }
+
+  listenAddUser() {
+    this._hubConnection.on('addUser', (data: any) => {
+      console.log('addUserEvent', data);
+      this.addUserEvent$.next(data);
+    });
+  }
+
+  listenUserOnline() {
+    this._hubConnection.on('userOnline', (data: any) => {
+      console.log('userOnline', data);
+      this.userOnlineEvent$.next(data);
     });
   }
 }

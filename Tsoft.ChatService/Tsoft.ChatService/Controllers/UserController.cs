@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Hubs;
+using Tsoft.ChatService.Hubs.Interfaces;
 using Tsoft.ChatService.Models;
 using Tsoft.Framework.Common;
 using TSoft.Framework.ApiUtils.Controllers;
@@ -17,11 +18,14 @@ namespace Tsoft.ChatService.Controllers
     public class UserController : ApiControllerBase
     {
         private IUserService _userService;
-        private readonly IHubContext<ChatHub> _hub;
         private readonly ApplicationUserService _applicationUserService;
-        public UserController(IUserService userService, ApplicationUserService applicationUserService, IHubContext<ChatHub> hub)
+        private IChatHub _chatHub;
+        private IHubContext<ChatHub> _hub;
+
+        public UserController(IUserService userService, ApplicationUserService applicationUserService, IChatHub chatHub, IHubContext<ChatHub> hub)
         {
             _userService = userService;
+            _chatHub = chatHub;
             _hub = hub;
             _applicationUserService = applicationUserService;
         }
@@ -70,9 +74,11 @@ namespace Tsoft.ChatService.Controllers
             {
                 var entity = AutoMapperUtils.AutoMap<UserRequestModel, User>(request);
                 var application = AutoMapperUtils.AutoMap<UserRequestModel, ApplicationUser>(request);
-                var result = _applicationUserService.Create(application);
-                _hub.Clients.All.SendAsync("adduser", result);
-                return await _userService.SaveAsync(entity, request.RoleIds, new Guid());
+                var result = await _userService.SaveAsync(entity, request.RoleIds, new Guid());
+                var appUser = AutoMapperUtils.AutoMap<User, ApplicationUser>(result);
+                await _chatHub.CreateUser(appUser);
+                await _hub.Clients.All.SendAsync(Hubs.Action.ADD_USER, appUser);
+                return result;
             });
         }
 
