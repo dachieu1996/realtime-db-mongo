@@ -151,7 +151,7 @@ export const userManagerRouter = {
   getUserById: `v${environment.API_VERSION}/users`,
   checkUserAvailable: `v${environment.API_VERSION}/users/`,
   checkEmailAvailable: `v${environment.API_VERSION}/users/`,
-  create: `v${environment.API_VERSION}/users`,
+  create: `user`,
   resendPassword: `v${environment.API_VERSION}/users`,
   getParameter: `v${environment.API_VERSION}/parameters`,
 };

@@ -13,6 +13,7 @@
   "menu.account.trigger": "Trigger Error",
   "menu.account.logout": "Đăng xuất",
   "menu.user-manager": "Quản lý nhân viên",
+  "menu.user-manager.create-user": "Tạo tài khoản",
   "menu.role-manager": "Quản lý nhóm người dùng",
   "app.login.remember-me": "Nhớ mật khẩu",
   "app.login.forgot-password": "Quên mật khẩu?",

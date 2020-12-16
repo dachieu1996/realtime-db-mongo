@@ -24,4 +24,7 @@ export class UserManagerService {
       sort
     );
   }
+  createUser(data: any): Observable<any> {
+    return this.httpClient.post(environment.BASE_API_URL + userManagerRouter.create, data);
+  }
 }

@@ -37,6 +37,7 @@ import { DatePickerTimeComponent } from './date/date-picker-time/date-picker-tim
 import { DatePickerComponent } from './date/date-picker/date-picker.component';
 import { RadioComponent } from './radio/radio.component';
 import { ButtonSendComponent } from './buttons/button-send/button-send.component';
+import { InputPasswordComponent } from './inputs/input-password/input-password.component';
 @NgModule({
   declarations: [
     OnOffComponent,
@@ -66,6 +67,7 @@ import { ButtonSendComponent } from './buttons/button-send/button-send.component
     TagComponent,
     ButtonNextComponent,
     TextareaComponent,
+    InputPasswordComponent,
     InputTextareaComponent,
     InputNumberComponent,
     InputEmailComponent,
@@ -108,6 +110,7 @@ import { ButtonSendComponent } from './buttons/button-send/button-send.component
     ButtonNextComponent,
     TextareaComponent,
     InputTextareaComponent,
+    InputPasswordComponent,
     InputNumberComponent,
     InputEmailComponent,
     RateComponent,
