@@ -12,6 +12,6 @@ namespace Tsoft.ChatService.Models
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
         public Guid SenderId { get; set; }
-        public string RoomId { get; set; }
+        public string ConversationId { get; set; }
     }
 }

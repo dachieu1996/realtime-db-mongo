@@ -1,6 +1,7 @@
 <div class="wrapper">
   <div style="width:300px;height: 100%;overflow: auto;float: left">
-    <app-available-user [users]="users$ | async" [rooms]="rooms$ | async" [loading]="loading"></app-available-user>
+    <app-available-user [users]="users$ | async" [loading]="loading$ | async">
+    </app-available-user>
   </div>
   <div style="height: 100%">
     <app-chat-area></app-chat-area>

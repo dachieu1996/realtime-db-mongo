@@ -1,10 +1,13 @@
+import { loadUsersAction } from './../store/user/actions';
+import { AppState } from './../store/state';
+import { selectAllUsers, selectLoadingUser } from './../store/user/selectors';
 import { BehaviorSubject } from 'rxjs';
 import { ChatHubService } from './../service/chat-hub.service';
-import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '@env/environment';
-import { Component, OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, HostListener, OnInit, ChangeDetectorRef } from '@angular/core';
 import * as signalR from "@aspnet/signalr";
+import { select, Store } from '@ngrx/store';
+import { loadUsersSuccessAction } from '../store/user/actions';
 
 @Component({
   selector: 'app-dashboard-chat',
@@ -12,20 +15,21 @@ import * as signalR from "@aspnet/signalr";
   styleUrls: ['./dashboard-chat.component.less']
 })
 export class DashboardChatComponent implements OnInit {
-  loading = true;
   rooms;
   users;
-  rooms$ = new BehaviorSubject(null);
-  users$ = new BehaviorSubject(null);
+  // user$ = new BehaviorSubject(null);
+
+  loading$ = this.store.select(selectLoadingUser);
+  users$ = this.store.select(selectAllUsers);
   private hubConnection: signalR.HubConnection
 
   constructor(
     private http: HttpClient,
-    private chatHubService: ChatHubService,
+    private store: Store<AppState>,
+    private chatHubService: ChatHubService
   ) { }
 
   ngOnInit() {
-
     this.chatHubService.startedEvent$.subscribe(response => {
       if (response)
         this.fetchRoomsAndUser();
@@ -34,7 +38,7 @@ export class DashboardChatComponent implements OnInit {
     this.chatHubService.addUserEvent$.subscribe(data => {
       if (data && this.users) {
         this.users = [...this.users, data];
-        this.users$.next(this.users);
+        // this.users$.next(this.users);
       }
     })
 
@@ -43,35 +47,16 @@ export class DashboardChatComponent implements OnInit {
         let index = this.users.findIndex(x => x.id == data.id);
         this.users[index] = data;
         this.users = [...this.users];
-        this.users$.next(this.users);
+        // this.users$.next(this.users);
       }
-    })
-
-    this.chatHubService.getRooms().then(response => {
-      console.log(response);
     })
   }
 
   async fetchRoomsAndUser() {
-    this.rooms = await this.chatHubService.getRooms();
-    this.users = await this.chatHubService.getAllUsers();
-    this.rooms$.next(this.rooms);
-    this.users$.next(this.users);
-    this.loading = false;
+    this.store.dispatch(loadUsersAction());
+    let rooms = await this.chatHubService.getRooms();
+    let users = await this.chatHubService.getAllUsers();
+    this.store.dispatch(loadUsersSuccessAction({ users }));
+    // this.rooms$.next(this.rooms);
   }
-
-
-
-  // public startConnection = () => {
-
-  //   this.hubConnection = new signalR.HubConnectionBuilder()
-  //     .withUrl(environment.BASE_API_URL + 'chat-hub/?token=' + this.tokenService.get().token)
-  //     .build();
-
-  //   this.hubConnection
-  //     .start()
-  //     .then(() => console.log('Connection started'))
-  //     .catch(err => console.log('Error while starting connection: ' + err))
-  // }
-
 }

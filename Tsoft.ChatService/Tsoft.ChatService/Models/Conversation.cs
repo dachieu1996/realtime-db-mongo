@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Tsoft.ChatService.Models
 {
-    public class Room
+    public class Conversation
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -20,7 +20,7 @@ namespace Tsoft.ChatService.Models
         public ICollection<string> Participants { get; set; }
     }
 
-    public static class RoomType
+    public static class ConversationType
     {
         public static string PRIVATE = "private";
         public static string GROUP = "group";

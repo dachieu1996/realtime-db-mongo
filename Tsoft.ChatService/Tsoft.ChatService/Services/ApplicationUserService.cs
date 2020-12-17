@@ -9,7 +9,7 @@ namespace Tsoft.ChatService
 {
     public class ApplicationUserService
     {
-        private readonly IMongoCollection<ApplicationUser> _users;
+        private readonly IMongoCollection<User> _users;
         private readonly IMongoCollection<Message> _message;
 
         #region snippet_UserServiceConstructor
@@ -18,11 +18,11 @@ namespace Tsoft.ChatService
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
 
-            _users = database.GetCollection<ApplicationUser>(settings.UsersCollectionName);
+            _users = database.GetCollection<User>(settings.UsersCollectionName);
             _message = database.GetCollection<Message>(settings.MessagesCollectionName);
         }
         #endregion
-        public ApplicationUser Create(ApplicationUser User)
+        public User Create(User User)
         {
             _users.InsertOne(User);
             return User;

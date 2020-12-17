@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Hubs;
 using Tsoft.ChatService.Hubs.Interfaces;
+using Tsoft.ChatService.Hubs.Services;
 using Tsoft.ChatService.Models;
 using TSoft.Framework.ApiUtils;
 using TSoft.Framework.Authentication;
@@ -62,6 +63,7 @@ namespace Tsoft.ChatService
                 sp.GetRequiredService<IOptions<ChatDatabaseSettings>>().Value);
 
             services.AddTransient<IChatHub, ChatHub>();
+            services.AddTransient<IChatHubService, ChatHubService>();
 
             services.AddSingleton<ApplicationUserService>();
             services.AddSignalR();

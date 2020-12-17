@@ -25,12 +25,16 @@ export class AvailableUserComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.users || changes.rooms) {
-      console.log('33333333333333333', changes.users);
-      if (this.users || this.rooms) {
-        const sortRooms = this.rooms.sort((r1, r2) => DescendingSort(r1.lastActivityTime, r2.lastActivityTime));
+      if (this.users && this.users.length > 0) {
+        let sortRooms = [];
+        // if (this.rooms)
+        //   sortRooms = this.rooms.sort((r1, r2) => DescendingSort(r1.lastActivityTime, r2.lastActivityTime));
         this.listData = [...sortRooms, ...this.users];
         this.ref.detectChanges();
       }
+    }
+    if (changes.loading) {
+      this.ref.detectChanges();
     }
   }
 
@@ -39,6 +43,7 @@ export class AvailableUserComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit() {
+
   }
 
   onClickItem(item) {

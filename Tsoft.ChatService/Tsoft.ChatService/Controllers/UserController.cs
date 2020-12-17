@@ -72,10 +72,10 @@ namespace Tsoft.ChatService.Controllers
         {
             return await ExecuteFunction(async () =>
             {
-                var entity = AutoMapperUtils.AutoMap<UserRequestModel, User>(request);
-                var application = AutoMapperUtils.AutoMap<UserRequestModel, ApplicationUser>(request);
+                var entity = AutoMapperUtils.AutoMap<UserRequestModel, TSoft.Framework.Authentication.User>(request);
+                var application = AutoMapperUtils.AutoMap<UserRequestModel, Models.User>(request);
                 var result = await _userService.SaveAsync(entity, request.RoleIds, new Guid());
-                var appUser = AutoMapperUtils.AutoMap<User, ApplicationUser>(result);
+                var appUser = AutoMapperUtils.AutoMap<TSoft.Framework.Authentication.User, Models.User>(result);
                 await _chatHub.CreateUser(appUser);
                 await _hub.Clients.All.SendAsync(Hubs.Action.ADD_USER, appUser);
                 return result;
@@ -88,7 +88,7 @@ namespace Tsoft.ChatService.Controllers
         {
             return await ExecuteFunction(async () =>
             {
-                var entity = AutoMapperUtils.AutoMap<UserRequestModel, User>(request);
+                var entity = AutoMapperUtils.AutoMap<UserRequestModel, TSoft.Framework.Authentication.User>(request);
                 entity.ID = id;
                 return await _userService.UpdateAsync(entity, request.RoleIds);
             });
