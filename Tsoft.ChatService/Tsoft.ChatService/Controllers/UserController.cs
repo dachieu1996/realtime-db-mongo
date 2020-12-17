@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Hubs;
@@ -21,9 +24,10 @@ namespace Tsoft.ChatService.Controllers
         private readonly ApplicationUserService _applicationUserService;
         private IChatHub _chatHub;
         private IHubContext<ChatHub> _hub;
-
-        public UserController(IUserService userService, ApplicationUserService applicationUserService, IChatHub chatHub, IHubContext<ChatHub> hub)
+        private readonly IHostingEnvironment _environment;
+        public UserController(IHostingEnvironment environment, IUserService userService, ApplicationUserService applicationUserService, IChatHub chatHub, IHubContext<ChatHub> hub)
         {
+            _environment = environment;
             _userService = userService;
             _chatHub = chatHub;
             _hub = hub;
@@ -90,7 +94,11 @@ namespace Tsoft.ChatService.Controllers
             {
                 var entity = AutoMapperUtils.AutoMap<UserRequestModel, TSoft.Framework.Authentication.User>(request);
                 entity.ID = id;
-                return await _userService.UpdateAsync(entity, request.RoleIds);
+                var result = await _userService.UpdateAsync(entity, request.RoleIds);
+                var appUser = AutoMapperUtils.AutoMap<User, ApplicationUser>(result);
+       
+                //await _hub.Clients.All.SendAsync(Hubs.Action.ADD_USER, appUser);
+                return result;
             });
         }
 
@@ -103,6 +111,44 @@ namespace Tsoft.ChatService.Controllers
                 return await _userService.AddRole(id, roleIds);
             });
         }
-        
+        [HttpPost]
+        [Route("UploadFile")]
+        public async Task<IActionResult> UploadFile([FromForm] IFormFile files)
+        {
+            var itemFiles = files;
+            var folderName = Path.Combine("assets", "user");
+            var pathToSave = Path.Combine("D:\\Chat-SignalR\\Tsoft.ChatService\\wwwroot", folderName);
+            var pathSave = Path.Combine(_environment.WebRootPath, folderName);
+            if (!Directory.Exists(pathToSave))
+                Directory.CreateDirectory(pathToSave);
+            if (!Directory.Exists(pathSave))
+                Directory.CreateDirectory(pathSave);
+            if (itemFiles != null || itemFiles.Length > 0)
+            {
+                string fileName = Path.GetExtension(itemFiles.FileName);
+                string name = itemFiles.FileName;
+                string fullPath = Path.Combine(pathToSave, name);
+                string fullPath1 = Path.Combine(pathSave, name);
+                string dbPath = Path.Combine(folderName, name);
+
+                fullPath = fullPath.Replace("\\", "/");
+
+                using (var stream = new FileStream(fullPath, FileMode.Create))
+                {
+                    itemFiles.CopyTo(stream);
+                    stream.Flush();
+                }
+                using (var stream = new FileStream(fullPath1, FileMode.Create))
+                {
+                    itemFiles.CopyTo(stream);
+                    stream.Flush();
+                }
+                return Ok(new { dbPath });
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
     }
 }

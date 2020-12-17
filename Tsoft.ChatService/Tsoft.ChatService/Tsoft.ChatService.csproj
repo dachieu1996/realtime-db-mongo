@@ -17,5 +17,9 @@
 		<PackageReference Include="TSoft.Framework.DB" Version="1.0.3" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="wwwroot\Image\" />
+	</ItemGroup>
+
 
 </Project>
