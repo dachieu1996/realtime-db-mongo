@@ -39,9 +39,10 @@ namespace Tsoft.ChatService.Hubs.Services
             return AutoMapperUtils.AutoMap<Conversation, ConversationViewModel>(conversations);
         }
 
-        public Task<User> GetUserById(string Id)
+        public async Task<User> GetUserById(string Id)
         {
-            throw new NotImplementedException();
+            var user = await _users.Find(x => x.Id == Guid.Parse(Id)).FirstOrDefaultAsync();
+            return user;
         }
 
         public Task SaveConversation(Conversation model)
@@ -51,17 +52,8 @@ namespace Tsoft.ChatService.Hubs.Services
 
         public async Task<User> SaveUser(User model)
         {
-            if (model.Id == null)
-            {
-                model.CreatedOnDate = DateTime.Now;
-                model.LastModifiedOnDate = DateTime.Now;
-                await _users.InsertOneAsync(model);
-            }
-            else
-            {
-                model.LastModifiedOnDate = DateTime.Now;
-                await _users.ReplaceOneAsync(x => x.Id == model.Id, model);
-            }
+            model.LastModifiedOnDate = DateTime.Now;
+            await _users.ReplaceOneAsync(x => x.Id == model.Id, model, new ReplaceOptions { IsUpsert = true });
             return model;
         }
     }

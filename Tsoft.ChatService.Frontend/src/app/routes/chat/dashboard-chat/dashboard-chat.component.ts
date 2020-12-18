@@ -24,7 +24,6 @@ export class DashboardChatComponent implements OnInit {
   private hubConnection: signalR.HubConnection
 
   constructor(
-    private http: HttpClient,
     private store: Store<AppState>,
     private chatHubService: ChatHubService
   ) { }
@@ -54,7 +53,6 @@ export class DashboardChatComponent implements OnInit {
 
   async fetchRoomsAndUser() {
     this.store.dispatch(loadUsersAction());
-    let rooms = await this.chatHubService.getRooms();
     let users = await this.chatHubService.getAllUsers();
     this.store.dispatch(loadUsersSuccessAction({ users }));
     // this.rooms$.next(this.rooms);

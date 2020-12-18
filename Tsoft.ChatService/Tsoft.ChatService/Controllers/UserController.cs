@@ -9,7 +9,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Hubs;
 using Tsoft.ChatService.Hubs.Interfaces;
-using Tsoft.ChatService.Models;
 using Tsoft.Framework.Common;
 using TSoft.Framework.ApiUtils.Controllers;
 using TSoft.Framework.Authentication;
@@ -95,7 +94,6 @@ namespace Tsoft.ChatService.Controllers
                 var entity = AutoMapperUtils.AutoMap<UserRequestModel, TSoft.Framework.Authentication.User>(request);
                 entity.ID = id;
                 var result = await _userService.UpdateAsync(entity, request.RoleIds);
-                var appUser = AutoMapperUtils.AutoMap<User, ApplicationUser>(result);
        
                 //await _hub.Clients.All.SendAsync(Hubs.Action.ADD_USER, appUser);
                 return result;

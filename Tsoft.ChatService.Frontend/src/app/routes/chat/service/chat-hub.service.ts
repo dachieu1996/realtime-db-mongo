@@ -25,10 +25,6 @@ export class ChatHubService {
     this._hubConnection.invoke('NewMessage', message);
   }
 
-  getRooms() {
-    return this._hubConnection.invoke('GetRooms');
-  }
-
   getAllUsers() {
     return this._hubConnection.invoke('GetAllUsers');
   }

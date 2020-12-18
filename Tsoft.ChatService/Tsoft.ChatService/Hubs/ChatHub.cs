@@ -273,30 +273,30 @@ namespace Tsoft.ChatService.Hubs
             }
         }
 
-        public override Task OnConnectedAsync()
+        public override async Task OnConnectedAsync()
         {
             try
             {
-                SendStatus(Status.ONLINE);
+                await SendStatus(Status.ONLINE);
             }
             catch (Exception ex)
             {
                 Clients.Caller.SendAsync("onError", "OnConnected:" + ex.Message);
             }
-            return base.OnConnectedAsync();
+            await base.OnConnectedAsync();
         }
-        public override Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception exception)
         {
             try
             {
-                SendStatus(Status.OFFLINE);
+                await SendStatus(Status.OFFLINE);
             }
             catch (Exception ex)
             {
                 Clients.Caller.SendAsync("onError", "OnDisconnected: " + ex.Message);
             }
 
-            return base.OnDisconnectedAsync(exception);
+            await base.OnDisconnectedAsync(exception);
         }
 
         public async Task SendStatus(Status status)
@@ -343,7 +343,7 @@ namespace Tsoft.ChatService.Hubs
     public static class Action
     {
         public static string USER_ONLINE = "userOnline";
-        public static string USER_BUSY= "userBusy";
+        public static string USER_BUSY = "userBusy";
         public static string USER_OFFLINE = "userOffline";
         public static string ADD_USER = "addUser";
     }
