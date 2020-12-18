@@ -12,7 +12,8 @@ export class ChatHubService {
   public startedEvent$ = new BehaviorSubject(null);
   public addUserEvent$ = new BehaviorSubject(null);
   public userOnlineEvent$ = new BehaviorSubject(null);
-
+  public userOfflineEvent$ = new BehaviorSubject(null);
+  public userBusyEvent$ = new BehaviorSubject(null);
   constructor(
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
   ) {
@@ -27,6 +28,10 @@ export class ChatHubService {
 
   getAllUsers() {
     return this._hubConnection.invoke('GetAllUsers');
+  }
+
+  sendStatus(status) {
+    return this._hubConnection.invoke('SendStatus', status);
   }
 
   private createConnection() {
@@ -44,6 +49,8 @@ export class ChatHubService {
         this.startedEvent$.next('Hub connection started');
         this.listenAddUser();
         this.listenUserOnline();
+        this.listenUserOffline();
+        this.listenUserBusy();
       })
       .catch(err => {
         console.log('Error while establishing connection, retrying...');
@@ -68,6 +75,18 @@ export class ChatHubService {
     this._hubConnection.on('userOnline', (data: any) => {
       console.log('userOnline', data);
       this.userOnlineEvent$.next(data);
+    });
+  }
+  listenUserOffline() {
+    this._hubConnection.on('userOffline', (data: any) => {
+      console.log('userOffline', data);
+      this.userOfflineEvent$.next(data);
+    });
+  }
+  listenUserBusy() {
+    this._hubConnection.on('userBusy', (data: any) => {
+      console.log('userBusy', data);
+      this.userBusyEvent$.next(data);
     });
   }
 }

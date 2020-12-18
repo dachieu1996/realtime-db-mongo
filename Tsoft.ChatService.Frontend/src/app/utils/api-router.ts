@@ -148,12 +148,13 @@ export const metadataServiceRouter = {
 
 export const userManagerRouter = {
   getUsers: `user`,
-  getUserById: `v${environment.API_VERSION}/users`,
+  getUserById: `user`,
   checkUserAvailable: `v${environment.API_VERSION}/users/`,
   checkEmailAvailable: `v${environment.API_VERSION}/users/`,
   create: `user`,
-  resendPassword: `v${environment.API_VERSION}/users`,
-  getParameter: `v${environment.API_VERSION}/parameters`,
+  changePassword: `user/change-password`,
+  updateUser: `user`,
+  uploadFile: `user/uploadfile`
 };
 
 export const customerRouter = {

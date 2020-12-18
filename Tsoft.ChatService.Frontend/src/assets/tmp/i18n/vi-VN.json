@@ -14,6 +14,8 @@
   "menu.account.logout": "Đăng xuất",
   "menu.user-manager": "Quản lý nhân viên",
   "menu.user-manager.create-user": "Tạo tài khoản",
+  "menu.user-manager.detail-user": "Sửa thông tin ",
+  "menu.user-manager.change-password": "Thay đổi mật khẩu",
   "menu.role-manager": "Quản lý nhóm người dùng",
   "app.login.remember-me": "Nhớ mật khẩu",
   "app.login.forgot-password": "Quên mật khẩu?",
@@ -334,6 +336,10 @@
   "user-manager.employee.list.status": "Trạng thái",
   "user-manager.employee.title": "Quản lý nhân viên",
   "user-manager.employee.edit.title": "Thông tin nhân viên",
+  "user-manager.change-password.title": "Thay đổi mật khẩu",
+  "user-manager.change-password.password-old": "Mật khẩu cũ",
+  "user-manager.change-password.password-new": "Mật khẩu mới",
+  "user-manager.change-password.password-new-confirm": "Nhập lại mật khẩu mới",
   "user-manager.employee.create.title": "Tạo nhân viên"
 
 }

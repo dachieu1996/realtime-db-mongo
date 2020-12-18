@@ -1,5 +1,6 @@
 import { DescendingSort } from './../../../../helpers/ExtentionMethod';
 import { Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-available-user',
@@ -30,6 +31,8 @@ export class AvailableUserComponent implements OnInit, OnChanges {
         // if (this.rooms)
         //   sortRooms = this.rooms.sort((r1, r2) => DescendingSort(r1.lastActivityTime, r2.lastActivityTime));
         this.listData = [...sortRooms, ...this.users];
+        console.log("listData", this.listData);
+
         this.ref.detectChanges();
       }
     }
@@ -37,7 +40,13 @@ export class AvailableUserComponent implements OnInit, OnChanges {
       this.ref.detectChanges();
     }
   }
-
+  formatUrlImage(data) {
+    if (data && data != null) {
+      return `${environment.BASE_API_URL}${data}`;
+    } else {
+      return 'assets/images/no-images.png'
+    }
+  }
   constructor(
     private ref: ChangeDetectorRef,
   ) { }

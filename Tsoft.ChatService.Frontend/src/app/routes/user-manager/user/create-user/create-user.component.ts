@@ -19,6 +19,7 @@ export class CreateUserComponent extends AppComponentBase implements OnInit {
   createForm: FormGroup;
   loading = false;
   avatarFile: File;
+  avatarUrl: string;
   btnSave: ButtonModel;
   btnClose: ButtonModel;
   constructor(injector: Injector,
@@ -58,8 +59,10 @@ export class CreateUserComponent extends AppComponentBase implements OnInit {
 
   onChangeImage(file) {
     this.avatarFile = file;
+    this.userService.uploadAFile(file).subscribe(res => {
+      this.avatarUrl = res.dbPath;
+    });
   }
-
   // --- END EVENT --- //
 
   // --- FUNCTION --- //
@@ -69,7 +72,7 @@ export class CreateUserComponent extends AppComponentBase implements OnInit {
       this.createForm.controls[i].updateValueAndValidity();
     }
     if (this.createForm.valid) {
-      this.userService.createUser({ ...this.createForm.value }).subscribe(res => {
+      this.userService.createUser({ ...this.createForm.value, avatarUrl: this.avatarUrl }).subscribe(res => {
         if (res.success) {
           this.message.success(this.translate('layout.notify.create.sucess'));
 
