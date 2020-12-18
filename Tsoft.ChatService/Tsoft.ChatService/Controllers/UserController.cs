@@ -126,7 +126,7 @@ namespace Tsoft.ChatService.Controllers
         {
             var itemFiles = files;
             var folderName = Path.Combine("assets", "user");
-            var pathToSave = Path.Combine("D:\\Chat-SignalR\\Tsoft.ChatService\\wwwroot", folderName);
+            var pathToSave = Path.Combine(_environment.WebRootPath, folderName);
             var pathSave = Path.Combine(_environment.WebRootPath, folderName);
             if (!Directory.Exists(pathToSave))
                 Directory.CreateDirectory(pathToSave);

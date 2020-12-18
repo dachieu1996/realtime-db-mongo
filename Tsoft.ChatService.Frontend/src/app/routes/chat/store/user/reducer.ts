@@ -11,6 +11,9 @@ export const initialState: UserState = {
 
 export const usersReducer = createReducer(
   initialState,
-  on(loadUsersSuccessAction, (state, action) => ({ data: action.users, loading: false })),
+  on(loadUsersSuccessAction, (state, action) => {
+    console.log('eeeeeeeeeeeeee', action)
+    return { data: action.users, loading: false }
+  }),
   on(loadUsersAction, (state) => ({ ...state, loading: true }))
 );

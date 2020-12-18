@@ -277,7 +277,7 @@ namespace Tsoft.ChatService.Hubs
         {
             try
             {
-                await SendStatus(Status.ONLINE);
+                //await SendStatus(Status.ONLINE);
             }
             catch (Exception ex)
             {
@@ -301,6 +301,7 @@ namespace Tsoft.ChatService.Hubs
 
         public async Task SendStatus(Status status)
         {
+            var a = Context;
             var user = await _chatHubService.GetUserById(IdentityId);
 
             if (status == Status.BUSY)
@@ -316,6 +317,13 @@ namespace Tsoft.ChatService.Hubs
                 user.Status = Status.ONLINE;
                 var result = await _chatHubService.SaveUser(user);
                 await Clients.Others.SendAsync(Action.USER_ONLINE, result);
+            }
+            else if (status == Status.OFFLINE)
+            {
+                user.Device = GetDevice();
+                user.Status = Status.OFFLINE;
+                var result = await _chatHubService.SaveUser(user);
+                await Clients.Others.SendAsync(Action.USER_OFFLINE, result);
             }
 
         }

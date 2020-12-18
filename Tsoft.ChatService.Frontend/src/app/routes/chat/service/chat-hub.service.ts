@@ -1,3 +1,4 @@
+import { UserStatus } from './../models/user';
 import { BehaviorSubject } from 'rxjs';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { environment } from '@env/environment';
@@ -30,7 +31,7 @@ export class ChatHubService {
     return this._hubConnection.invoke('GetAllUsers');
   }
 
-  sendStatus(status) {
+  sendStatus(status: UserStatus) {
     return this._hubConnection.invoke('SendStatus', status);
   }
 
@@ -58,6 +59,10 @@ export class ChatHubService {
       });
   }
 
+  public isConnectionIsEstablished() {
+    return this.connectionIsEstablished;
+  }
+
   private registerOnServerEvents(): void {
     this._hubConnection.on('MessageReceived', (data: any) => {
 
@@ -66,26 +71,22 @@ export class ChatHubService {
 
   listenAddUser() {
     this._hubConnection.on('addUser', (data: any) => {
-      console.log('addUserEvent', data);
       this.addUserEvent$.next(data);
     });
   }
 
   listenUserOnline() {
     this._hubConnection.on('userOnline', (data: any) => {
-      console.log('userOnline', data);
       this.userOnlineEvent$.next(data);
     });
   }
   listenUserOffline() {
     this._hubConnection.on('userOffline', (data: any) => {
-      console.log('userOffline', data);
       this.userOfflineEvent$.next(data);
     });
   }
   listenUserBusy() {
     this._hubConnection.on('userBusy', (data: any) => {
-      console.log('userBusy', data);
       this.userBusyEvent$.next(data);
     });
   }
