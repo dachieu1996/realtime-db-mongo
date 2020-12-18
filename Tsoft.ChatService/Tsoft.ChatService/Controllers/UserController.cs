@@ -13,6 +13,7 @@ using Tsoft.ChatService.Models;
 using Tsoft.Framework.Common;
 using TSoft.Framework.ApiUtils.Controllers;
 using TSoft.Framework.Authentication;
+using TSoft.Framework.Authentication.Business.Model;
 
 namespace Tsoft.ChatService.Controllers
 {
@@ -111,6 +112,16 @@ namespace Tsoft.ChatService.Controllers
                 return await _userService.AddRole(id, roleIds);
             });
         }
+        [HttpPut("change-password")]
+        //[AppAuthorize(PermissionTypes.Any, PermissionRule.view_home)]
+        public async Task<IActionResult> ChangePassword(Guid id, [FromBody] ChangePasswordRequestModel request)
+        {
+            return await ExecuteFunction(async () =>
+            {
+                return await _userService.ChangePassword(id, request);
+            });
+        }
+
         [HttpPost]
         [Route("UploadFile")]
         public async Task<IActionResult> UploadFile([FromForm] IFormFile files)
