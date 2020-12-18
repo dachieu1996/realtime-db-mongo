@@ -27,4 +27,24 @@ export class UserManagerService {
   createUser(data: any): Observable<any> {
     return this.httpClient.post(environment.BASE_API_URL + userManagerRouter.create, data);
   }
+  getUserById(id: any): Observable<any> {
+    return this.httpClient.get(environment.BASE_API_URL + userManagerRouter.getUserById + '/' + id);
+  }
+  uploadAFile(File: any): Observable<any> {
+    const frmData = new FormData();
+    frmData.append("files", File);
+    return this.httpClient.post(environment.BASE_API_URL + userManagerRouter.uploadFile, frmData);
+  }
+  updateUser(id: string, data: any): Observable<any> {
+    return this.httpClient.put(
+      environment.BASE_API_URL + userManagerRouter.updateUser + '/' + id,
+      data,
+    );
+  }
+  changePassword(id: string, data: any): Observable<any> {
+    return this.httpClient.put(
+      environment.BASE_API_URL + userManagerRouter.changePassword + '?id=' + id,
+      data,
+    );
+  }
 }

@@ -3,7 +3,7 @@ import { ChatHubService } from './../service/chat-hub.service';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
-import { Component, OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef, HostListener } from '@angular/core';
 import * as signalR from "@aspnet/signalr";
 
 @Component({
@@ -17,13 +17,21 @@ export class DashboardChatComponent implements OnInit {
   users;
   rooms$ = new BehaviorSubject(null);
   users$ = new BehaviorSubject(null);
-  private hubConnection: signalR.HubConnection
+  private hubConnection: signalR.HubConnection;
+
+  @HostListener('document:visibilitychange', ['$event'])
+  visibilitychange() {
+    if (document.hidden) {
+      this.chatHubService.sendStatus(2);
+    } else {
+      this.chatHubService.sendStatus(1);
+    }
+  }
 
   constructor(
     private http: HttpClient,
     private chatHubService: ChatHubService,
   ) { }
-
   ngOnInit() {
 
     this.chatHubService.startedEvent$.subscribe(response => {
@@ -47,11 +55,26 @@ export class DashboardChatComponent implements OnInit {
       }
     })
 
+    this.chatHubService.userOfflineEvent$.subscribe(data => {
+      if (data && this.users) {
+        let index = this.users.findIndex(x => x.id == data.id);
+        this.users[index] = data;
+        this.users = [...this.users];
+        this.users$.next(this.users);
+      }
+    })
+    this.chatHubService.userBusyEvent$.subscribe(data => {
+      if (data && this.users) {
+        let index = this.users.findIndex(x => x.id == data.id);
+        this.users[index] = data;
+        this.users = [...this.users];
+        this.users$.next(this.users);
+      }
+    })
     this.chatHubService.getRooms().then(response => {
       console.log(response);
     })
   }
-
   async fetchRoomsAndUser() {
     this.rooms = await this.chatHubService.getRooms();
     this.users = await this.chatHubService.getAllUsers();

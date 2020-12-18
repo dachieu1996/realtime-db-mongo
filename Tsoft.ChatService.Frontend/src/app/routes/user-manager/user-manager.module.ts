@@ -17,6 +17,7 @@ import { TabInfoEmployeeComponent } from './user/tabs/tab-info-employee/tab-info
 import { TabPermissonEmployeeComponent } from './user/tabs/tab-permisson-employee/tab-permisson-employee.component';
 import { ListEmployeeComponent } from './user/list-employee/list-employee.component';
 import { DetailEmployeeComponent } from './user/detail-employee/detail-employee.component';
+import { ChangePasswordComponent } from './user/change-password/change-password.component';
 
 
 
@@ -41,6 +42,7 @@ import { DetailEmployeeComponent } from './user/detail-employee/detail-employee.
     TabPermissonEmployeeComponent,
     ListEmployeeComponent,
     DetailEmployeeComponent,
+    ChangePasswordComponent
   ]
 })
 export class UserManagerModule { }

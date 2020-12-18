@@ -15,6 +15,7 @@ export class InputPasswordComponent implements ControlValueAccessor, OnInit {
   @Input('readonly') readonly = false;
   @Input('required') required = false;
   @Input('span') span = 16;
+  @Input('placeholder') placeholder;
   passwordVisible = false;
   password?: string;
   constructor(@Optional() @Self() public ngControl: NgControl) {

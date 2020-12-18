@@ -5,10 +5,12 @@
         <nz-skeleton [nzLoading]="loading" [nzActive]="true" [nzAvatar]="true" [nzParagraph]="{ rows: 0 }">
           <nz-list-item-meta [nzAvatar]="avatar" [nzTitle]="nzTitle" [nzDescription]="description">
             <ng-template #avatar>
-              <img *ngIf="item.avatarUrl" [src]="item.avatarUrl" class="avatar">
+              <img *ngIf="item.avatarUrl" [src]="formatUrlImage(item.avatarUrl)" class="avatar">
               <div *ngIf="!item.avatarUrl" class="avatar text">
                 {{ getName(item).charAt(0) }}
                 <div *ngIf="item.status == 1" class="online"></div>
+                <div *ngIf="item.status == 0"></div>
+                <div *ngIf="item.status == 2" class="busy"></div>
               </div>
             </ng-template>
             <ng-template #nzTitle><strong>{{ getName(item) }}</strong></ng-template>
