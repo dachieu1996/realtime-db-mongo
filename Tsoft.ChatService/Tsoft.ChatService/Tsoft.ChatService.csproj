@@ -6,15 +6,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MailKit" Version="2.10.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
 		<PackageReference Include="MongoDB.Driver" Version="2.11.5" />
 		<PackageReference Include="TSoft.Framework.ApiUtils" Version="1.1.4" />
-		<PackageReference Include="TSoft.Framework.Authentication" Version="1.1.5" />
+		<PackageReference Include="TSoft.Framework.Authentication" Version="1.1.6" />
 		<PackageReference Include="Tsoft.Framework.Common" Version="1.0.0" />
-		<PackageReference Include="TSoft.Framework.DB" Version="1.0.3" />
+		<PackageReference Include="TSoft.Framework.DB" Version="1.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>

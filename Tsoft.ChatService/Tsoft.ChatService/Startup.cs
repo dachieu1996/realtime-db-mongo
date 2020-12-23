@@ -43,9 +43,10 @@ namespace Tsoft.ChatService
             });
 
             services.AddControllers();
-
-            // Update-Database
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddMvc();
+         
+        // Update-Database
+        var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.RegisterChatServiceComponents(Configuration, connectionString);
             services.RegisterCommonServiceComponents(Configuration);
             services.RegisterDbContextBase(Configuration, connectionString);
@@ -61,8 +62,8 @@ namespace Tsoft.ChatService
             services.AddSingleton<ChatDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ChatDatabaseSettings>>().Value);
 
-            services.AddTransient<IChatHub, ChatHub>();
-
+            services.AddTransient<IChatHub, ChatHub>(); 
+            services.AddTransient<IEmailCodeService, EmailCodeService>();
             services.AddSingleton<ApplicationUserService>();
             services.AddSignalR();
         }

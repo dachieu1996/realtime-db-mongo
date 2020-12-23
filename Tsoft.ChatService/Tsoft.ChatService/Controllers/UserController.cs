@@ -26,7 +26,9 @@ namespace Tsoft.ChatService.Controllers
         private IChatHub _chatHub;
         private IHubContext<ChatHub> _hub;
         private readonly IHostingEnvironment _environment;
-        public UserController(IHostingEnvironment environment, IUserService userService, ApplicationUserService applicationUserService, IChatHub chatHub, IHubContext<ChatHub> hub)
+        public UserController(IHostingEnvironment environment,
+            IUserService userService, 
+            ApplicationUserService applicationUserService, IChatHub chatHub, IHubContext<ChatHub> hub)
         {
             _environment = environment;
             _userService = userService;
@@ -79,11 +81,11 @@ namespace Tsoft.ChatService.Controllers
             {
                 var entity = AutoMapperUtils.AutoMap<UserRequestModel, User>(request);
                 var application = AutoMapperUtils.AutoMap<UserRequestModel, ApplicationUser>(request);
-                var result = await _userService.SaveAsync(entity, request.RoleIds, new Guid());
-                var appUser = AutoMapperUtils.AutoMap<User, ApplicationUser>(result);
+                var user = await _userService.SaveAsync(entity, request.RoleIds, new Guid());
+                var appUser = AutoMapperUtils.AutoMap<User, ApplicationUser>(user);
                 await _chatHub.CreateUser(appUser);
                 await _hub.Clients.All.SendAsync(Hubs.Action.ADD_USER, appUser);
-                return result;
+                return user;
             });
         }
 
@@ -94,7 +96,7 @@ namespace Tsoft.ChatService.Controllers
             return await ExecuteFunction(async () =>
             {
                 var entity = AutoMapperUtils.AutoMap<UserRequestModel, User>(request);
-                entity.ID = id;
+                entity.Id = id;
                 var result = await _userService.UpdateAsync(entity, request.RoleIds);
                 var appUser = AutoMapperUtils.AutoMap<User, ApplicationUser>(result);
        
