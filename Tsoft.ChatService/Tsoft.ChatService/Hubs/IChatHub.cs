@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Tsoft.ChatService.Hubs.Models;
 using Tsoft.ChatService.Models;
 using Tsoft.ChatService.ViewModel;
 
@@ -15,7 +16,6 @@ namespace Tsoft.ChatService.Hubs.Interfaces
         Task Leave(string roomName);
         Task CreateGroup(string name);
         Task<User> CreateUser(User user);
-        Task DeleteRoom(string roomName);
         IEnumerable<User> GetAllUsers();
         IEnumerable<User> GetUsers(string roomName);
         //RoomMessageUserViewModel GetMessageHistory(string roomName);

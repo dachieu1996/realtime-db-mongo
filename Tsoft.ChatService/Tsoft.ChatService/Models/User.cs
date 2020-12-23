@@ -10,6 +10,7 @@ namespace Tsoft.ChatService.Models
 {
     public class User
     {
+        [BsonId]
         public Guid Id { get; set; }
         public string Fullname { get; set; }
         public string Username { get; set; }

@@ -1,3 +1,6 @@
+import { selectSelectedConversation, selectConversations } from './../store/conversation/selectors';
+import { loadConversationAction, loadConversationSuccessAction, addMessageToConversationAction } from './../store/conversation/actions';
+import { Message } from './../models/message';
 import { UserStatus } from './../models/user';
 import { loadUsersAction, loadUsersSuccessAction } from './../store/user/actions';
 import { AppState } from './../store/state';
@@ -15,12 +18,14 @@ import { select, Store } from '@ngrx/store';
   templateUrl: './dashboard-chat.component.html',
   styleUrls: ['./dashboard-chat.component.less']
 })
-export class DashboardChatComponent implements OnInit, OnDestroy {
+export class DashboardChatComponent implements OnInit {
   rooms;
   users;
+  selectedConversation$ = this.store.select(selectSelectedConversation);
 
   loading$ = this.store.select(selectLoadingUser);
   users$ = this.store.select(selectAllUsers);
+  conversations$ = this.store.select(selectConversations);
 
   @HostListener('document:visibilitychange', ['$event'])
   visibilitychange() {
@@ -38,9 +43,12 @@ export class DashboardChatComponent implements OnInit, OnDestroy {
     private chatHubService: ChatHubService
   ) { }
   ngOnInit() {
-    this.chatHubService.startedEvent$.subscribe(response => {
-      if (response)
-        this.fetchRoomsAndUser();
+    this.store.dispatch(loadConversationAction());
+    this.chatHubService.startedEvent$.subscribe(async response => {
+      if (response) {
+        await this.fetchAllConversations();
+        await this.fetchRoomsAndUser();
+      }
     })
 
     this.chatHubService.addUserEvent$.subscribe(data => {
@@ -51,8 +59,6 @@ export class DashboardChatComponent implements OnInit, OnDestroy {
     })
 
     this.chatHubService.userOnlineEvent$.subscribe(data => {
-      console.log('userOnlineEvent', data);
-
       if (data && this.users) {
         let index = this.users.findIndex(x => x.id == data.id);
         this.users[index] = data;
@@ -63,8 +69,6 @@ export class DashboardChatComponent implements OnInit, OnDestroy {
     })
 
     this.chatHubService.userOfflineEvent$.subscribe(data => {
-      console.log('userOfflineEvent', data);
-
       if (data && this.users) {
         let index = this.users.findIndex(x => x.id == data.id);
         this.users[index] = data;
@@ -74,7 +78,6 @@ export class DashboardChatComponent implements OnInit, OnDestroy {
       }
     })
     this.chatHubService.userBusyEvent$.subscribe(data => {
-      console.log('userBusyEvent', data);
       if (data && this.users) {
         let index = this.users.findIndex(x => x.id == data.id);
         this.users[index] = data;
@@ -85,11 +88,11 @@ export class DashboardChatComponent implements OnInit, OnDestroy {
         this.store.dispatch(loadUsersSuccessAction({ users }));
       }
     })
-  }
-
-  ngOnDestroy() {
-    console.log('rrrrrrrrrrrrrrrrr');
-    this.chatHubService.sendStatus(UserStatus.OFFLINE);
+    this.chatHubService.newMessageEvent$.subscribe(data => {
+      if (data) {
+        this.store.dispatch(addMessageToConversationAction({ conversation: data.conversation, message: data.message }))
+      }
+    })
   }
 
   async fetchRoomsAndUser() {
@@ -98,7 +101,11 @@ export class DashboardChatComponent implements OnInit, OnDestroy {
     this.users = [...users];
     this.store.dispatch(loadUsersSuccessAction({ users }));
     this.chatHubService.sendStatus(UserStatus.ONLINE);
-
     // this.rooms$.next(this.rooms);
+  }
+
+  async fetchAllConversations() {
+    let conversations = await this.chatHubService.getAllConversations();
+    this.store.dispatch(loadConversationSuccessAction({ conversations }));
   }
 }

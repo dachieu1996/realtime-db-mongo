@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Hubs.Interfaces;
+using Tsoft.ChatService.Hubs.Models;
 using Tsoft.ChatService.Models;
 using Tsoft.ChatService.ViewModel;
 using Tsoft.Framework.Common;
@@ -33,21 +34,76 @@ namespace Tsoft.ChatService.Hubs.Services
             return AutoMapperUtils.AutoMap<User, User>(users);
         }
 
-        public async Task<List<ConversationViewModel>> GetConversations(string userId)
+        public async Task<Conversation> GetConversationById(Guid id)
         {
-            var conversations = await _conversation.Find(c => c.Participants.Contains(userId)).ToListAsync();
-            return AutoMapperUtils.AutoMap<Conversation, ConversationViewModel>(conversations);
+            var conversation = await _conversation.Find(x => x.Id == id).FirstOrDefaultAsync();
+            return conversation;
         }
 
-        public async Task<User> GetUserById(string Id)
+        public async Task<List<ConversationViewModel>> GetConversationByUserId(Guid userId)
         {
-            var user = await _users.Find(x => x.Id == Guid.Parse(Id)).FirstOrDefaultAsync();
+            var conversations = await _conversation.Find(c => c.Participants.Contains(userId)).ToListAsync();
+            var conversationsVM = new List<ConversationViewModel>();
+            foreach (var conversation in conversations)
+            {
+                var conVM = AutoMapperUtils.AutoMap<Conversation, ConversationViewModel>(conversation);
+                conVM.Messages = await GetMessagesByConversationId(conversation.Id);
+                conversationsVM.Add(conVM);
+            }
+            return conversationsVM;
+        }
+
+        public async Task<IEnumerable<Message>> GetMessagesByConversationId(Guid conversationId)
+        {
+            var messages = await _message.Find(x => x.ConversationId == conversationId).ToListAsync();
+            return messages;
+        }
+
+        public async Task<User> GetUserById(Guid Id)
+        {
+            var user = await _users.Find(x => x.Id == Id).FirstOrDefaultAsync();
             return user;
         }
 
-        public Task SaveConversation(Conversation model)
+        public async Task<Conversation> GetPrivateConversation(Guid userId1, Guid userId2)
         {
-            throw new NotImplementedException();
+            var conversation = await _conversation.Find(x => x.Type == ConversationType.PRIVATE && x.Participants.Contains(userId1) && x.Participants.Contains(userId2)).FirstOrDefaultAsync();
+            return conversation;
+        }
+
+        public async Task<Conversation> SaveConversation(Conversation model)
+        {
+            if(model.Id == Guid.Empty)
+            {
+                model.Id = Guid.NewGuid();
+                model.CreatedOnDate = DateTime.Now;
+            }
+            model.LastModifiedOnDate = DateTime.Now;
+            var conversation = await _conversation.ReplaceOneAsync(x => x.Id == model.Id, model, new ReplaceOptions { IsUpsert = true });
+            return model;
+        }
+
+        public async Task<Conversation> SaveLastActivityConversation(Guid conversationId, DateTime lastActivityTime, string lastMessageContent)
+        {
+            var conversation = await _conversation.Find(x => x.Id == conversationId).FirstOrDefaultAsync();
+            if (conversation == null)
+                throw new Exception(IChatHubService.ConversationNotFound);
+
+            conversation.LastActivityTime = lastActivityTime;
+            conversation.LastMessage = lastMessageContent;
+            return await SaveConversation(conversation);
+        }
+
+        public async Task<Message> SaveMessage(Message model)
+        {
+            if(model.Id == Guid.Empty)
+            {
+                model.Id = Guid.NewGuid();
+                model.CreatedOnDate = DateTime.Now;
+            }
+            model.LastModifiedOnDate = DateTime.Now;
+            await _message.ReplaceOneAsync(x => x.Id == model.Id, model, new ReplaceOptions { IsUpsert = true });
+            return model;
         }
 
         public async Task<User> SaveUser(User model)

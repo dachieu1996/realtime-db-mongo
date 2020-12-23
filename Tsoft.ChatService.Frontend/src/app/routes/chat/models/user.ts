@@ -5,7 +5,8 @@ export interface User {
   avatarUrl: string,
   currentRoom: string,
   device: string,
-  status: UserStatus
+  status: UserStatus,
+  lastModifiedOnDate: Date
 }
 
 export enum UserStatus {

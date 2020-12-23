@@ -11,13 +11,15 @@ namespace Tsoft.ChatService.Models
     public class Conversation
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
         public string LastMessage { get; set; }
+        public string AvatarUrl { get; set; }
         public DateTime? LastActivityTime { get; set; }
-        public ICollection<string> Participants { get; set; }
+        public DateTime? CreatedOnDate { get; set; }
+        public DateTime? LastModifiedOnDate { get; set; }
+        public ICollection<Guid> Participants { get; set; }
     }
 
     public static class ConversationType

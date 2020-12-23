@@ -7,11 +7,12 @@ namespace Tsoft.ChatService.Models
     public class Message
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
         public Guid SenderId { get; set; }
-        public string ConversationId { get; set; }
+        public Guid ConversationId { get; set; }
+        public DateTime? CreatedOnDate { get; set; }
+        public DateTime? LastModifiedOnDate { get; set; }
     }
 }

@@ -1,12 +1,15 @@
+import { User } from './user';
 import { Message } from './message';
 export interface Conversation {
-  id: string,
+  id?: string,
   name?: string,
-  type: ConversationType,
+  type?: ConversationType,
   lastMessage?: string,
-  lastActivityTime?: string,
-  participants: string[],
-  messages: Message[]
+  lastActivityTime?: Date,
+  participants?: string[],
+  messages?: Message[],
+  receiverId?: string,
+  avatarUrl?: string
 }
 
 export enum ConversationType {

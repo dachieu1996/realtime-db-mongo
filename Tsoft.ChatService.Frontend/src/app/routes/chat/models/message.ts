@@ -1,7 +1,9 @@
+import { User } from './user';
 export interface Message {
-  id: string,
+  id?: string,
   content: string,
   timestamp: Date,
   senderId: string,
-  conversationId: string
+  receiverId?: string,
+  conversationId?: string
 }

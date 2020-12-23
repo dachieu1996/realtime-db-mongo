@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -13,15 +13,20 @@ using Tsoft.ChatService.Hubs.Models;
 using TSoft.Framework.Authentication;
 using User = Tsoft.ChatService.Models.User;
 using Status = Tsoft.ChatService.Models.Status;
+using System.Text.RegularExpressions;
 
 namespace Tsoft.ChatService.Hubs
 {
 
     public class ChatHub : Hub, IChatHub
     {
+        private static HashSet<string> _currentConnections = new HashSet<string>();
         //public readonly static List<UserViewModel> _Connections = new List<UserViewModel>();
         public readonly static List<RoomViewModel> _Rooms = new List<RoomViewModel>();
-        private readonly static Dictionary<string, string> _ConnectionsMap = new Dictionary<string, string>();
+
+        // Coversation Id - 
+        private readonly static Dictionary<Guid, List<string>> _conversationConnectionMap = new Dictionary<Guid, List<string>>();
+        private readonly static Dictionary<Guid, List<string>> _userConnectionMap = new Dictionary<Guid, List<string>>();
 
         private IUserService _userSerivce;
         private IChatHubService _chatHubService;
@@ -45,214 +50,102 @@ namespace Tsoft.ChatService.Hubs
             return users;
         }
 
-        public async Task SendPrivate(string receiverName, string message)
+        public async Task SendMessage(SendMessageRequestModel request)
         {
-            //if (_ConnectionsMap.TryGetValue(receiverName, out string userId))
-            //{
-            //    // Who is the sender;
-            //    //var sender = _Connections.Where(u => u.Username == IdentityName).First();
-
-            //    if (!string.IsNullOrEmpty(message.Trim()))
-            //    {
-            //        // Build the message
-            //        var messageViewModel = new MessageViewModel()
-            //        {
-            //            Content = Regex.Replace(message, @"(?i)<(?!img|a|/a|/img).*?>", string.Empty),
-            //            From = sender.Fullname,
-            //            AvatarUrl = sender.AvatarUrl,
-            //            To = "",
-            //            Timestamp = DateTime.Now.ToLongTimeString()
-            //        };
-
-            //        // Send the message
-            //        await Clients.Client(userId).SendAsync("newMessage", messageViewModel);
-            //        await Clients.Caller.SendAsync("newMessage", messageViewModel);
-            //    }
-            //}
-        }
-
-        public async Task SendToPrivateConversation(SendPrivateMessageRequestModel model)
-        {
-            if (string.IsNullOrEmpty(model.ConversationId))
+            try
             {
-                var newConversation = new Conversation
+                if (string.IsNullOrEmpty(request.Content.Trim()))
                 {
-                    Participants = new List<string> { model.UserId, IdentityId },
-                    Type = ConversationType.PRIVATE
+                    return;
+                }
+
+                // Check Conversation is exist
+                if (request.ConversationId == Guid.Empty && request.ReceiverId != Guid.Empty)
+                {
+                    var con = await _chatHubService.GetPrivateConversation(IdentityId, request.ReceiverId);
+                    // Tạo conversation mới
+                    if (con == null)
+                    {
+                        var conversationModel = new Conversation
+                        {
+                            Participants = new List<Guid> { IdentityId, request.ReceiverId },
+                            Type = ConversationType.PRIVATE
+                        };
+
+                        var newConversation = await _chatHubService.SaveConversation(conversationModel);
+                        request.ConversationId = newConversation.Id;
+                    }
+                    else
+                    {
+                        request.ConversationId = con.Id;
+                    }
+
+                    if (_userConnectionMap.ContainsKey(IdentityId))
+                    {
+                        foreach (var senderConnectionId in _userConnectionMap[IdentityId])
+                        {
+                            await Groups.AddToGroupAsync(senderConnectionId, request.ConversationId.ToString());
+                        }
+                    }
+                    // Check receiver is online and add to conversation
+                    if (_userConnectionMap.ContainsKey(request.ReceiverId))
+                    {
+                        foreach (var receiverConnectionId in _userConnectionMap[request.ReceiverId])
+                        {
+                            await Groups.AddToGroupAsync(receiverConnectionId, request.ConversationId.ToString());
+                        }
+                    }
+                }
+
+                // Create and save message in database
+                var content = Regex.Replace(request.Content, @"(?i)<(?!img|a|/a|/img).*?>", string.Empty);
+                var msg = new Message()
+                {
+                    Content = content,
+                    SenderId = IdentityId,
+                    ConversationId = request.ConversationId,
+                    Timestamp = DateTime.Now,
+                    LastModifiedOnDate = DateTime.Now
                 };
-                _chatHubService.SaveConversation(newConversation);
+                var newMessage = await _chatHubService.SaveMessage(msg);
+                var conversation = await _chatHubService.GetConversationById(request.ConversationId);
+
+                await _chatHubService.SaveLastActivityConversation((Guid)request.ConversationId, DateTime.Now, content);
+
+                var response = new SendMessageResponseModel { Conversation = conversation, Message = newMessage };
+                // Broadcast the message
+                await Clients.Group(request.ConversationId.ToString()).SendAsync("newMessage", response);
+            }
+            catch (Exception e)
+            {
+                await Clients.Caller.SendAsync("onError", "Message not send! Message should be 1-500 characters.");
             }
         }
 
-        public async Task SendToGroupConversation(SendGroupMessageRequestModel model)
-        {
-
-        }
-
-        //public async Task SendToRoom(string roomName, string message)
-        //{
-        //    try
-        //    {
-        //        var user = _users.Find(u => u.Username == IdentityName).FirstOrDefault();
-        //        var room = _room.Find(r => r.Name == roomName).FirstOrDefault();
-
-        //        if (!string.IsNullOrEmpty(message.Trim()))
-        //        {
-        //            // Create and save message in database
-        //            var msg = new Message()
-        //            {
-        //                Content = Regex.Replace(message, @"(?i)<(?!img|a|/a|/img).*?>", string.Empty),
-        //                SenderId = user.Id,
-        //                ConversationId = room.Id,
-        //                Timestamp = DateTime.Now
-        //            };
-        //            _message.InsertOne(msg);
-
-        //            var update = Builders<Conversation>.Update
-        //                .Set("LastActivityTime", msg.Timestamp);
-        //            _room.UpdateOne(x => x.Id == room.Id, update);
-
-        //            // Broadcast the message
-        //            var messageViewModel = new MessageViewModel();
-        //            messageViewModel.AvatarUrl = user.AvatarUrl;
-        //            messageViewModel.Content = msg.Content;
-        //            messageViewModel.From = user.Username;
-        //            messageViewModel.To = room.Name;
-        //            messageViewModel.Timestamp = msg.Timestamp.ToString();
-        //            await Clients.Group(roomName).SendAsync("newMessage", messageViewModel);
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        await Clients.Caller.SendAsync("onError", "Message not send! Message should be 1-500 characters.");
-        //    }
-        //}
-        //public async Task Join(string roomName)
-        //{
-        //    try
-        //    {
-        //        var user = _Connections.Where(u => u.Username == IdentityName).FirstOrDefault();
-        //        if (user != null && user.CurrentRoom != roomName)
-        //        {
-        //            // Remove user from others list
-        //            if (!string.IsNullOrEmpty(user.CurrentRoom))
-        //                await Clients.OthersInGroup(user.CurrentRoom).SendAsync("removeUser", user);
-
-        //            // Join to new cha  t room
-        //            await Leave(user.CurrentRoom);
-        //            await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
-        //            user.CurrentRoom = roomName;
-
-        //            // Tell others to update their list of users
-        //            //await Clients.OthersInGroup(roomName).SendAsync(Action.ADD_USER, user);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await Clients.Caller.SendAsync("onError", "You failed to join the chat room!" + ex.Message);
-        //    }
-        //}
         public async Task Leave(string roomName)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
         }
         public async Task CreateGroup(string name)
         {
-            //try
-            //{
+            try
+            {
 
-            //    // Accept: Letters, numbers and one space between words.
-            //    Match match = Regex.Match(name, @"^\w+( \w+)*$");
-            //    if (!match.Success)
-            //    {
-            //        await Clients.Caller.SendAsync("onError", "Invalid room name!\nRoom name must contain only letters and numbers.");
-            //    }
-            //    else if (name.Length < 5 || name.Length > 100)
-            //    {
-            //        await Clients.Caller.SendAsync("onError", "Room name must be between 5-100 characters!");
-            //    }
-
-            //    else
-            //    {
-            //        // Create and save chat room in database
-            //        var user = _users.Find(u => u.Username == IdentityName).FirstOrDefault();
-            //        var room = new Conversation()
-            //        {
-            //            Name = roomName,
-            //        };
-            //        _room.InsertOne(room);
-
-
-            //        if (room != null)
-            //        {
-            //            // Update room list
-            //            var roomViewModel = new RoomViewModel();
-            //            roomViewModel.Id = room.Id;
-            //            roomViewModel.Name = room.Name;
-            //            _Rooms.Add(roomViewModel);
-            //            await Clients.All.SendAsync("addChatRoom", roomViewModel);
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    await Clients.Caller.SendAsync("onError", "Couldn't create chat room: " + ex.Message);
-            //}
+            }
+            catch (Exception ex)
+            {
+                await Clients.Caller.SendAsync("onError", "Couldn't create chat room: " + ex.Message);
+            }
         }
 
-        public async Task DeleteRoom(string roomName)
+        public async Task<IEnumerable<ConversationViewModel>> GetAllConversations()
         {
-            //try
-            //{
-            //    // Delete from database
-            //    var room = _room.FindOneAndDelete(r => r.Name == roomName);
-
-            //    // Delete from list
-            //    var roomViewModel = _Rooms.First(r => r.Name == roomName);
-            //    _Rooms.Remove(roomViewModel);
-
-            //    // Move users back to Lobby
-            //    await Clients.Group(roomName).SendAsync("onRoomDeleted", string.Format("Room {0} has been deleted.\nYou are now moved to the Lobby!", roomName));
-
-            //    // Tell all users to update their room list
-            //    await Clients.All.SendAsync("removeChatRoom", roomViewModel);
-            //}
-            //catch (Exception)
-            //{
-            //    await Clients.Caller.SendAsync("onError", "Can't delete this chat room. Only owner can delete this room.");
-            //}
-        }
-        public async Task<IEnumerable<ConversationViewModel>> GetConversationsAsync()
-        {
-            var conversations = await _chatHubService.GetConversations(IdentityId);
+            var conversations = await _chatHubService.GetConversationByUserId(IdentityId);
             return conversations;
         }
 
-        //public RoomMessageUserViewModel GetMessageHistory(string roomName)
-        //{
-        //    var room = _room.Find(x => x.Name == roomName).ToList();
-        //    var roomId = _room.Find(x => x.Name == roomName).FirstOrDefault();
-        //    var user = _users.Find(user => true).ToList();
-        //    var message = _message.Find(message => message.ConversationId == roomId.Id).ToList();
-        //    var query = from c in room
-        //                select new RoomMessageUserViewModel
-        //                {
-        //                    Id = c.Id,
-        //                    RoomName = c.Name,
-        //                    UserMessage = (from u in user
-        //                                   join m in message on u.Id equals m.SenderId
-        //                                   select new UserMessage
-        //                                   {
-        //                                       UserId = u.Id,
-        //                                       Name = u.Username,
-        //                                       MessageId = m.Id,
-        //                                       Content = m.Content,
-        //                                       TimeCreated = m.Timestamp
-        //                                   }).ToList(),
-        //                };
-        //    var result = query.OrderByDescending(m => m.UserMessage.OrderByDescending(x => x.TimeCreated)).FirstOrDefault();
-        //    return result;
-        //}
+
+        #region FUNCIONS
         private string IdentityName
         {
 
@@ -264,24 +157,58 @@ namespace Tsoft.ChatService.Hubs
             }
 
         }
-        private string IdentityId
+        private Guid IdentityId
         {
             get
             {
                 var identity = (ClaimsIdentity)Context.User.Identity;
-                return identity.FindFirst("Id")?.Value;
+                return Guid.Parse(identity.FindFirst("Id")?.Value);
             }
         }
+        #endregion
 
+        #region OVERRIDE
         public override async Task OnConnectedAsync()
         {
             try
             {
+                var connectionId = Context.ConnectionId;
+                _currentConnections.Add(connectionId);
                 //await SendStatus(Status.ONLINE);
+
+                // Add các connection vào user
+                if (!_userConnectionMap.ContainsKey(IdentityId))
+                {
+                    _userConnectionMap.Add(IdentityId, new List<string> { connectionId });
+                }
+                else
+                {
+                    _userConnectionMap[IdentityId].Add(connectionId);
+                }
+
+                // Lấy các nhóm của caller
+                var caller = await _chatHubService.GetUserById(IdentityId);
+                if (caller == null)
+                {
+                    await Clients.Caller.SendAsync(IChatHubService.UserNotFound);
+                    return;
+                }
+
+                // Join các nhóm
+                var conversations = await _chatHubService.GetConversationByUserId(IdentityId);
+                foreach (var conversation in conversations)
+                {
+                    if (!_conversationConnectionMap.ContainsKey(conversation.Id))
+                    {
+                        _conversationConnectionMap.Add(conversation.Id, new List<string>());
+                    }
+                    _conversationConnectionMap[conversation.Id].Add(connectionId);
+                    await Groups.AddToGroupAsync(connectionId, conversation.Id.ToString());
+                }
             }
             catch (Exception ex)
             {
-                Clients.Caller.SendAsync("onError", "OnConnected:" + ex.Message);
+                await Clients.Caller.SendAsync("onError", "OnConnected:" + ex.Message);
             }
             await base.OnConnectedAsync();
         }
@@ -289,19 +216,39 @@ namespace Tsoft.ChatService.Hubs
         {
             try
             {
+                // Lấy các nhóm có caller
+                // Xóa caller khỏi nhóm
                 await SendStatus(Status.OFFLINE);
+
+                var connectionId = Context.ConnectionId;
+                var connection = _currentConnections.FirstOrDefault(x => x == Context.ConnectionId);
+                if (connection != null)
+                {
+                    _currentConnections.Remove(connection);
+                }
+
+                // Xóa các connection ra khỏi user
+                _userConnectionMap[IdentityId].Remove(connectionId);
+
+                // Thoát các nhóm
+                var conversations = await _chatHubService.GetConversationByUserId(IdentityId);
+                foreach (var conversation in conversations)
+                {
+                    _conversationConnectionMap[conversation.Id].Remove(connectionId);
+                    await Groups.RemoveFromGroupAsync(connectionId, conversation.Id.ToString());
+                }
             }
             catch (Exception ex)
             {
-                Clients.Caller.SendAsync("onError", "OnDisconnected: " + ex.Message);
+                await Clients.Caller.SendAsync("onError", "OnDisconnected: " + ex.Message);
             }
 
             await base.OnDisconnectedAsync(exception);
         }
+        #endregion
 
         public async Task SendStatus(Status status)
         {
-            var a = Context;
             var user = await _chatHubService.GetUserById(IdentityId);
 
             if (status == Status.BUSY)
@@ -309,21 +256,21 @@ namespace Tsoft.ChatService.Hubs
                 user.Device = GetDevice();
                 user.Status = Status.BUSY;
                 var result = await _chatHubService.SaveUser(user);
-                await Clients.Others.SendAsync(Action.USER_BUSY, result);
+                await Clients.All.SendAsync(Action.USER_BUSY, result);
             }
             else if (status == Status.ONLINE)
             {
                 user.Device = GetDevice();
                 user.Status = Status.ONLINE;
                 var result = await _chatHubService.SaveUser(user);
-                await Clients.Others.SendAsync(Action.USER_ONLINE, result);
+                await Clients.All.SendAsync(Action.USER_ONLINE, result);
             }
             else if (status == Status.OFFLINE)
             {
                 user.Device = GetDevice();
                 user.Status = Status.OFFLINE;
                 var result = await _chatHubService.SaveUser(user);
-                await Clients.Others.SendAsync(Action.USER_OFFLINE, result);
+                await Clients.All.SendAsync(Action.USER_OFFLINE, result);
             }
 
         }

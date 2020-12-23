@@ -6,10 +6,17 @@ import { Action, createAction, props } from '@ngrx/store';
 export enum ActionTypes {
   LOAD_CONVERSATIONS = '[Conversation] Load Conversations',
   LOAD_CONVERSATIONS_SUCCESS = '[Conversation] Load Conversations Success',
-  LOAD_CONVERSATIONS_FAIL = '[Conversation] Load Conversations Fail'
+  LOAD_CONVERSATIONS_FAIL = '[Conversation] Load Conversations Fail',
+  JOIN_CONVERSATION = '[Conversation] Join Conversations',
+  REORDER_CONVERSATION = '[Conversation] Reorder Conversations',
+  ADD_MESSAGE_TO_CONVERSATION = '[Conversation] Add Message To Conversation'
 }
 
 
-export const loadConversationAction = createAction(ActionTypes.LOAD_CONVERSATIONS)
-export const loadConversationSuccessAction = createAction(ActionTypes.LOAD_CONVERSATIONS_SUCCESS, props<{ conversations: Conversation[] }>())
-export const loadConversationFailAction = createAction(ActionTypes.LOAD_CONVERSATIONS_FAIL, props<{ error: string }>())
+export const loadConversationAction = createAction(ActionTypes.LOAD_CONVERSATIONS);
+export const reorderConversationAction = createAction(ActionTypes.REORDER_CONVERSATION, props<{ conversations: Conversation[] }>());
+export const loadConversationSuccessAction = createAction(ActionTypes.LOAD_CONVERSATIONS_SUCCESS, props<{ conversations: Conversation[] }>());
+export const loadConversationFailAction = createAction(ActionTypes.LOAD_CONVERSATIONS_FAIL, props<{ error: string }>());
+export const joinConversationAction = createAction(ActionTypes.JOIN_CONVERSATION, props<{ conversation: Conversation }>());
+export const addMessageToConversationAction = createAction(ActionTypes.ADD_MESSAGE_TO_CONVERSATION, props<{ conversation: Conversation, message: Message }>());
+
