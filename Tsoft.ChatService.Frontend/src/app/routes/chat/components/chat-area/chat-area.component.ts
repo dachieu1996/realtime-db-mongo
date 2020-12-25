@@ -39,7 +39,7 @@ export class ChatAreaComponent implements OnInit, AfterViewInit {
       conversationId: this.selectedConversation.id
     }
 
-    this.store.dispatch(addMessageToConversationAction({ conversation: this.selectedConversation, message: newMessage }));
+    // this.store.dispatch(addMessageToConversationAction({ conversation: this.selectedConversation, message: newMessage }));
     this.chatHubService.sendMessage(newMessage);
     this.chatbox.nativeElement.innerHTML = "";
     this.scrollToEnd();

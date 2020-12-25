@@ -12,24 +12,21 @@ export const conversationsReducer = createReducer(
   on(loadConversationSuccessAction, (state, action) => ({ data: action.conversations, loading: false })),
   on(reorderConversationAction, (state, action) => ({ ...state, data: action.conversations })),
   on(loadConversationAction, (state) => ({ ...state, loading: true })),
-  on(joinConversationAction, (state, action) => ({ ...state, selectedConversation: action.conversation })),
+  on(joinConversationAction, (state, action) => ({ ...state, selectedConversationId: action.conversation.id })),
   on(addMessageToConversationAction, (state, action) => {
     let newConversations = [...state.data];
+    let newMessage = action.message;
     let index;
     if (action.conversation.id) {
       index = newConversations.findIndex(x => x.id == action.conversation.id);
+      const messages = [...newConversations[index].messages, newMessage]
+
+      newConversations[index] = { ...newConversations[index], messages }
     } else {
       index = newConversations.findIndex(x => x.receiverId == action.conversation.receiverId);
     }
-    let newConversation = { ...action.conversation };
-    newConversation.messages = [...action.conversation.messages, action.message];
 
-    newConversations[index] = newConversation;
 
-    if (state.selectedConversation && state.selectedConversation.id == newConversation.id) {
-      return { ...state, data: newConversations, selectedConversation: newConversations[index] }
-    } else {
-      return { ...state, data: newConversations }
-    }
+    return { ...state, data: newConversations }
   })
 );

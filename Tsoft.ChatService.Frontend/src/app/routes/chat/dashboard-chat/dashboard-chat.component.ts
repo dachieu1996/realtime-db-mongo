@@ -89,6 +89,7 @@ export class DashboardChatComponent implements OnInit {
       }
     })
     this.chatHubService.newMessageEvent$.subscribe(data => {
+      console.log('newMessage', data)
       if (data) {
         this.store.dispatch(addMessageToConversationAction({ conversation: data.conversation, message: data.message }))
       }

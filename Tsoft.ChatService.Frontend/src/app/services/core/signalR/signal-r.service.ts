@@ -21,7 +21,7 @@ export class SignalRService {
       .build();
   };
 
-  private startConnection = () => {
+  public startConnection = () => {
     this.hubConnection
       .start()
       .then(() => {
@@ -32,7 +32,7 @@ export class SignalRService {
         console.log('Error while starting connection: ' + err);
 
         // if you get error try to start connection again after 3 seconds.
-        setTimeout(function() {
+        setTimeout(function () {
           this.startConnection();
         }, 3000);
       });
