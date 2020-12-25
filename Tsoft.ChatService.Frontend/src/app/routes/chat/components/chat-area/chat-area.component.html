@@ -1,194 +1,23 @@
-<div class="wrapper-chat-area">
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
+<div id="message-area" class="wrapper-chat-area">
+  <div class="container-message-area">
+    <ng-container *ngIf="selectedConversation">
+      <div nz-row *ngFor="let message of selectedConversation.messages">
+        <div *ngIf="message.senderId != myId" class="container other-message">
+          <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+            alt="Avatar">
+          <div [innerHTML]="message.content"></div>
+          <span class="time-right">{{ message.timestamp | date: 'dd/MM/yyyy' }}</span>
+        </div>
+        <div *ngIf="message.senderId == myId" class="container my-message">
+          <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+            alt="Avatar" class="right">
+          <div [innerHTML]="message.content"></div>
+          <span class="time-left">{{ message.timestamp | date: 'HH:mm' }}</span>
+        </div>
+      </div>
+    </ng-container>
   </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container other-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="container my-message">
-      <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
-    </div>
+  <div #chatbox class="container-message-box" contenteditable data-text="Write a message..."
+    (keydown.enter)="submitMessage($event);$event.preventDefault();">
   </div>
 </div>

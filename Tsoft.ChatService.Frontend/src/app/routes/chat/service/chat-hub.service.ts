@@ -1,3 +1,4 @@
+import { UserStatus } from './../models/user';
 import { BehaviorSubject } from 'rxjs';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { environment } from '@env/environment';
@@ -14,6 +15,7 @@ export class ChatHubService {
   public userOnlineEvent$ = new BehaviorSubject(null);
   public userOfflineEvent$ = new BehaviorSubject(null);
   public userBusyEvent$ = new BehaviorSubject(null);
+  public newMessageEvent$ = new BehaviorSubject(null);
   constructor(
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
   ) {
@@ -22,19 +24,23 @@ export class ChatHubService {
     this.startConnection();
   }
 
-  sendMessage(message) {
-    this._hubConnection.invoke('NewMessage', message);
+  sendMessage(message: {
+    content: string,
+    receiverId?: string,
+    conversationId?: string
+  }) {
+    this._hubConnection.invoke('SendMessage', message);
   }
 
-  getRooms() {
-    return this._hubConnection.invoke('GetRooms');
+  getAllConversations() {
+    return this._hubConnection.invoke('GetAllConversations');
   }
 
   getAllUsers() {
     return this._hubConnection.invoke('GetAllUsers');
   }
 
-  sendStatus(status) {
+  sendStatus(status: UserStatus) {
     return this._hubConnection.invoke('SendStatus', status);
   }
 
@@ -55,11 +61,16 @@ export class ChatHubService {
         this.listenUserOnline();
         this.listenUserOffline();
         this.listenUserBusy();
+        this.listenNewMessage();
       })
       .catch(err => {
         console.log('Error while establishing connection, retrying...');
         setTimeout(function () { this.startConnection(); }, 5000);
       });
+  }
+
+  public isConnectionIsEstablished() {
+    return this.connectionIsEstablished;
   }
 
   private registerOnServerEvents(): void {
@@ -70,27 +81,28 @@ export class ChatHubService {
 
   listenAddUser() {
     this._hubConnection.on('addUser', (data: any) => {
-      console.log('addUserEvent', data);
       this.addUserEvent$.next(data);
     });
   }
 
   listenUserOnline() {
     this._hubConnection.on('userOnline', (data: any) => {
-      console.log('userOnline', data);
       this.userOnlineEvent$.next(data);
     });
   }
   listenUserOffline() {
     this._hubConnection.on('userOffline', (data: any) => {
-      console.log('userOffline', data);
       this.userOfflineEvent$.next(data);
     });
   }
   listenUserBusy() {
     this._hubConnection.on('userBusy', (data: any) => {
-      console.log('userBusy', data);
       this.userBusyEvent$.next(data);
+    });
+  }
+  listenNewMessage() {
+    this._hubConnection.on('newMessage', (data: any) => {
+      this.newMessageEvent$.next(data);
     });
   }
 }

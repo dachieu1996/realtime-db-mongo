@@ -9,7 +9,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Hubs;
 using Tsoft.ChatService.Hubs.Interfaces;
-using Tsoft.ChatService.Models;
 using Tsoft.Framework.Common;
 using TSoft.Framework.ApiUtils.Controllers;
 using TSoft.Framework.Authentication;
@@ -79,13 +78,13 @@ namespace Tsoft.ChatService.Controllers
         {
             return await ExecuteFunction(async () =>
             {
-                var entity = AutoMapperUtils.AutoMap<UserRequestModel, User>(request);
-                var application = AutoMapperUtils.AutoMap<UserRequestModel, ApplicationUser>(request);
-                var user = await _userService.SaveAsync(entity, request.RoleIds, new Guid());
-                var appUser = AutoMapperUtils.AutoMap<User, ApplicationUser>(user);
+                var entity = AutoMapperUtils.AutoMap<UserRequestModel, TSoft.Framework.Authentication.User>(request);
+                var application = AutoMapperUtils.AutoMap<UserRequestModel, Models.User>(request);
+                var result = await _userService.SaveAsync(entity, request.RoleIds, new Guid());
+                var appUser = AutoMapperUtils.AutoMap<TSoft.Framework.Authentication.User, Models.User>(result);
                 await _chatHub.CreateUser(appUser);
                 await _hub.Clients.All.SendAsync(Hubs.Action.ADD_USER, appUser);
-                return user;
+                return result;
             });
         }
 
@@ -95,10 +94,10 @@ namespace Tsoft.ChatService.Controllers
         {
             return await ExecuteFunction(async () =>
             {
-                var entity = AutoMapperUtils.AutoMap<UserRequestModel, User>(request);
+
+                var entity = AutoMapperUtils.AutoMap<UserRequestModel, TSoft.Framework.Authentication.User>(request);
                 entity.Id = id;
                 var result = await _userService.UpdateAsync(entity, request.RoleIds);
-                var appUser = AutoMapperUtils.AutoMap<User, ApplicationUser>(result);
        
                 //await _hub.Clients.All.SendAsync(Hubs.Action.ADD_USER, appUser);
                 return result;
@@ -130,7 +129,7 @@ namespace Tsoft.ChatService.Controllers
         {
             var itemFiles = files;
             var folderName = Path.Combine("assets", "user");
-            var pathToSave = Path.Combine("D:\\Chat-SignalR\\Tsoft.ChatService\\wwwroot", folderName);
+            var pathToSave = Path.Combine(_environment.WebRootPath, folderName);
             var pathSave = Path.Combine(_environment.WebRootPath, folderName);
             if (!Directory.Exists(pathToSave))
                 Directory.CreateDirectory(pathToSave);

@@ -1,10 +1,17 @@
+import { selectSelectedConversation, selectConversations } from './../store/conversation/selectors';
+import { loadConversationAction, loadConversationSuccessAction, addMessageToConversationAction } from './../store/conversation/actions';
+import { Message } from './../models/message';
+import { UserStatus } from './../models/user';
+import { loadUsersAction, loadUsersSuccessAction } from './../store/user/actions';
+import { AppState } from './../store/state';
+import { selectAllUsers, selectLoadingUser } from './../store/user/selectors';
 import { BehaviorSubject } from 'rxjs';
 import { ChatHubService } from './../service/chat-hub.service';
-import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { HttpClient } from '@angular/common/http';
+import { Component, HostListener, OnInit, ChangeDetectorRef, Inject, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { environment } from '@env/environment';
-import { Component, OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef, HostListener } from '@angular/core';
 import * as signalR from "@aspnet/signalr";
+import { select, Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-dashboard-chat',
@@ -12,37 +19,42 @@ import * as signalR from "@aspnet/signalr";
   styleUrls: ['./dashboard-chat.component.less']
 })
 export class DashboardChatComponent implements OnInit {
-  loading = true;
   rooms;
   users;
-  rooms$ = new BehaviorSubject(null);
-  users$ = new BehaviorSubject(null);
-  private hubConnection: signalR.HubConnection;
+  selectedConversation$ = this.store.select(selectSelectedConversation);
+
+  loading$ = this.store.select(selectLoadingUser);
+  users$ = this.store.select(selectAllUsers);
+  conversations$ = this.store.select(selectConversations);
 
   @HostListener('document:visibilitychange', ['$event'])
   visibilitychange() {
-    if (document.hidden) {
-      this.chatHubService.sendStatus(2);
-    } else {
-      this.chatHubService.sendStatus(1);
+    if (this.chatHubService.isConnectionIsEstablished()) {
+      if (document.hidden) {
+        this.chatHubService.sendStatus(UserStatus.BUSY);
+      } else {
+        this.chatHubService.sendStatus(UserStatus.ONLINE);
+      }
     }
   }
 
   constructor(
-    private http: HttpClient,
-    private chatHubService: ChatHubService,
+    private store: Store<AppState>,
+    private chatHubService: ChatHubService
   ) { }
   ngOnInit() {
-
-    this.chatHubService.startedEvent$.subscribe(response => {
-      if (response)
-        this.fetchRoomsAndUser();
+    this.store.dispatch(loadConversationAction());
+    this.chatHubService.startedEvent$.subscribe(async response => {
+      if (response) {
+        await this.fetchAllConversations();
+        await this.fetchRoomsAndUser();
+      }
     })
 
     this.chatHubService.addUserEvent$.subscribe(data => {
       if (data && this.users) {
         this.users = [...this.users, data];
-        this.users$.next(this.users);
+        // this.users$.next(this.users);
       }
     })
 
@@ -50,8 +62,9 @@ export class DashboardChatComponent implements OnInit {
       if (data && this.users) {
         let index = this.users.findIndex(x => x.id == data.id);
         this.users[index] = data;
-        this.users = [...this.users];
-        this.users$.next(this.users);
+        const users = [...this.users];
+        // this.users$.next(this.users);
+        this.store.dispatch(loadUsersSuccessAction({ users }));
       }
     })
 
@@ -59,8 +72,9 @@ export class DashboardChatComponent implements OnInit {
       if (data && this.users) {
         let index = this.users.findIndex(x => x.id == data.id);
         this.users[index] = data;
-        this.users = [...this.users];
-        this.users$.next(this.users);
+        let users = [...this.users];
+        // this.users$.next(this.users);
+        this.store.dispatch(loadUsersSuccessAction({ users }));
       }
     })
     this.chatHubService.userBusyEvent$.subscribe(data => {
@@ -68,33 +82,30 @@ export class DashboardChatComponent implements OnInit {
         let index = this.users.findIndex(x => x.id == data.id);
         this.users[index] = data;
         this.users = [...this.users];
-        this.users$.next(this.users);
+        // this.users$.next(this.users);
+        let users = [...this.users];
+
+        this.store.dispatch(loadUsersSuccessAction({ users }));
       }
     })
-    this.chatHubService.getRooms().then(response => {
-      console.log(response);
+    this.chatHubService.newMessageEvent$.subscribe(data => {
+      if (data) {
+        this.store.dispatch(addMessageToConversationAction({ conversation: data.conversation, message: data.message }))
+      }
     })
   }
+
   async fetchRoomsAndUser() {
-    this.rooms = await this.chatHubService.getRooms();
-    this.users = await this.chatHubService.getAllUsers();
-    this.rooms$.next(this.rooms);
-    this.users$.next(this.users);
-    this.loading = false;
+    this.store.dispatch(loadUsersAction());
+    let users = await this.chatHubService.getAllUsers();
+    this.users = [...users];
+    this.store.dispatch(loadUsersSuccessAction({ users }));
+    this.chatHubService.sendStatus(UserStatus.ONLINE);
+    // this.rooms$.next(this.rooms);
   }
 
-
-
-  // public startConnection = () => {
-
-  //   this.hubConnection = new signalR.HubConnectionBuilder()
-  //     .withUrl(environment.BASE_API_URL + 'chat-hub/?token=' + this.tokenService.get().token)
-  //     .build();
-
-  //   this.hubConnection
-  //     .start()
-  //     .then(() => console.log('Connection started'))
-  //     .catch(err => console.log('Error while starting connection: ' + err))
-  // }
-
+  async fetchAllConversations() {
+    let conversations = await this.chatHubService.getAllConversations();
+    this.store.dispatch(loadConversationSuccessAction({ conversations }));
+  }
 }

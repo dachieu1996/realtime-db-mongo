@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Tsoft.ChatService.Hubs;
 using Tsoft.ChatService.Hubs.Interfaces;
+using Tsoft.ChatService.Hubs.Services;
 using Tsoft.ChatService.Models;
 using TSoft.Framework.ApiUtils;
 using TSoft.Framework.Authentication;
@@ -32,16 +33,6 @@ namespace Tsoft.ChatService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder =>
-                    builder.SetIsOriginAllowed(_ => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-            });
-
             services.AddControllers();
             services.AddMvc();
          
@@ -61,9 +52,9 @@ namespace Tsoft.ChatService
 
             services.AddSingleton<ChatDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ChatDatabaseSettings>>().Value);
+            services.AddTransient<IChatHub, ChatHub>();
+            services.AddTransient<IChatHubService, ChatHubService>();
 
-            services.AddTransient<IChatHub, ChatHub>(); 
-            services.AddTransient<IEmailCodeService, EmailCodeService>();
             services.AddSingleton<ApplicationUserService>();
             services.AddSignalR();
         }

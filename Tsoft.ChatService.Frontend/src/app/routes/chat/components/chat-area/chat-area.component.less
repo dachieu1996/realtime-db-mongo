@@ -1,10 +1,31 @@
 .wrapper-chat-area {
-  padding: 20px;
-  background: url('https://www.teahub.io/photos/full/70-707627_whats-app-background.jpg');
-  background-size: cover;
-  background-attachment: fixed;
   height: 100%;
   overflow: auto;
+}
+
+.container-message-area {
+  background: url('https://www.teahub.io/photos/full/70-707627_whats-app-background.jpg');
+  padding: 20px;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.container-message-box {
+  background: white;
+  width: 100%;
+  display: relative;
+  position: sticky;
+  bottom: 0;
+  border: none;
+  padding: 13px;
+}
+
+[contenteditable] {
+  outline: 0px solid transparent;
+}
+
+[contenteditable]:empty:not(:focus):before {
+  content: attr(data-text)
 }
 
 /* Chat containers */
