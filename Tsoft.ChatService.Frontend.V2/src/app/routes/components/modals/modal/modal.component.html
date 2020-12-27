@@ -1,0 +1,13 @@
+<nz-modal [nzWidth]="screenWidth" [nzFooter]="modalFooter" [(nzVisible)]="visible" nzTitle="{{ title }}"
+  (nzOnCancel)="handleCancel()" (nzOnOk)="handleSave()" (nzAfterOpen)="handleOpenModal()">
+  <ng-content></ng-content>
+</nz-modal>
+
+<ng-template #modalFooter>
+  <app-button-cancel (onClick)="handleCancel()" [popConfirm]="false">
+  </app-button-cancel>
+  <app-button-save *ngIf="isEdit" (onClick)="handleSave()" [loading]="loading">
+  </app-button-save>
+  <app-button-edit *ngIf="!isEdit" (onClick)="handleEdit()">
+  </app-button-edit>
+</ng-template>

@@ -1,0 +1,12 @@
+<nz-form-item>
+  <ng-container *ngIf="!hideLabel">
+    <app-label-vertical *ngIf="!labelHorizontal" [content]="labelContent" [required]="required">
+    </app-label-vertical>
+    <app-label-horizontal *ngIf="labelHorizontal" [content]="labelContent" [required]="required" [span]="24 - span">
+    </app-label-horizontal>
+  </ng-container>
+  <nz-form-control [nzSpan]="span" [nzErrorTip]="errorTip">
+    <input [attr.disabled]="disabled ? '' : null" [attr.readonly]="readonly ? '' : null"
+      [formControl]="ngControl.control" type="text" nz-input placeholder="{{placeHolder}}" />
+  </nz-form-control>
+</nz-form-item>

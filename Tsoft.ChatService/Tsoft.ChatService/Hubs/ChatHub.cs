@@ -14,6 +14,7 @@ using TSoft.Framework.Authentication;
 using User = Tsoft.ChatService.Models.User;
 using Status = Tsoft.ChatService.Models.Status;
 using System.Text.RegularExpressions;
+using Tsoft.ChatService.Hubs.Core;
 
 namespace Tsoft.ChatService.Hubs
 {
@@ -24,9 +25,8 @@ namespace Tsoft.ChatService.Hubs
         //public readonly static List<UserViewModel> _Connections = new List<UserViewModel>();
         public readonly static List<RoomViewModel> _Rooms = new List<RoomViewModel>();
 
-        // Coversation Id - 
-        private readonly static Dictionary<Guid, List<string>> _conversationConnectionMap = new Dictionary<Guid, List<string>>();
-        private readonly static Dictionary<Guid, List<string>> _userConnectionMap = new Dictionary<Guid, List<string>>();
+        // User - Connection Mapping
+        private readonly static ConnectionMapping<Guid> _userConnectionMapping = new ConnectionMapping<Guid>();
 
         private IUserService _userSerivce;
         private IChatHubService _chatHubService;
@@ -80,20 +80,15 @@ namespace Tsoft.ChatService.Hubs
                         request.ConversationId = con.Id;
                     }
 
-                    if (_userConnectionMap.ContainsKey(IdentityId))
+
+                    foreach (var senderConnectionId in _userConnectionMapping.GetConnections(IdentityId))
                     {
-                        foreach (var senderConnectionId in _userConnectionMap[IdentityId])
-                        {
-                            await Groups.AddToGroupAsync(senderConnectionId, request.ConversationId.ToString());
-                        }
+                        await Groups.AddToGroupAsync(senderConnectionId, request.ConversationId.ToString());
                     }
                     // Check receiver is online and add to conversation
-                    if (_userConnectionMap.ContainsKey(request.ReceiverId))
+                    foreach (var receiverConnectionId in _userConnectionMapping.GetConnections(request.ReceiverId))
                     {
-                        foreach (var receiverConnectionId in _userConnectionMap[request.ReceiverId])
-                        {
-                            await Groups.AddToGroupAsync(receiverConnectionId, request.ConversationId.ToString());
-                        }
+                        await Groups.AddToGroupAsync(receiverConnectionId, request.ConversationId.ToString());
                     }
                 }
 
@@ -177,14 +172,8 @@ namespace Tsoft.ChatService.Hubs
                 //await SendStatus(Status.ONLINE);
 
                 // Add các connection vào user
-                if (!_userConnectionMap.ContainsKey(IdentityId))
-                {
-                    _userConnectionMap.Add(IdentityId, new List<string> { connectionId });
-                }
-                else
-                {
-                    _userConnectionMap[IdentityId].Add(connectionId);
-                }
+
+                _userConnectionMapping.Add(IdentityId, connectionId);
 
                 // Lấy các nhóm của caller
                 var caller = await _chatHubService.GetUserById(IdentityId);
@@ -198,11 +187,6 @@ namespace Tsoft.ChatService.Hubs
                 var conversations = await _chatHubService.GetConversationByUserId(IdentityId);
                 foreach (var conversation in conversations)
                 {
-                    if (!_conversationConnectionMap.ContainsKey(conversation.Id))
-                    {
-                        _conversationConnectionMap.Add(conversation.Id, new List<string>());
-                    }
-                    _conversationConnectionMap[conversation.Id].Add(connectionId);
                     await Groups.AddToGroupAsync(connectionId, conversation.Id.ToString());
                 }
             }
@@ -228,13 +212,12 @@ namespace Tsoft.ChatService.Hubs
                 }
 
                 // Xóa các connection ra khỏi user
-                _userConnectionMap[IdentityId].Remove(connectionId);
+                _userConnectionMapping.Remove(IdentityId, connectionId);
 
                 // Thoát các nhóm
                 var conversations = await _chatHubService.GetConversationByUserId(IdentityId);
                 foreach (var conversation in conversations)
                 {
-                    _conversationConnectionMap[conversation.Id].Remove(connectionId);
                     await Groups.RemoveFromGroupAsync(connectionId, conversation.Id.ToString());
                 }
             }

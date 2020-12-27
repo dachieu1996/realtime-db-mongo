@@ -1,0 +1,15 @@
+<app-modal [visible]="visible" [loading]="loading" [isEdit]="isEdit" (onSave)="submit()" (onEdit)="onEdit()"
+  (onCancel)="handleCancel()" (openModal)="openModal()" [title]="title">
+  <div nz-row>
+  </div>
+  <nz-tabset>
+    <nz-tab nzTitle="{{'user-manager.role.create.create-role-permisson.title' | translate}}">
+      <app-tab-role-info #roleInfo [data]="dataPost">
+      </app-tab-role-info>
+    </nz-tab>
+    <nz-tab nzTitle="{{'user-manager.role.create.role-permisson.title' | translate}}">
+      <app-tab-role-permission #rolePermission [data]="permissonIds">
+      </app-tab-role-permission>
+    </nz-tab>
+  </nz-tabset>
+</app-modal>

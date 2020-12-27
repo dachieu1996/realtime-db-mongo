@@ -1,0 +1,13 @@
+<nz-form-item>
+  <app-label-horizontal [span]="24 - span" [for]="name" [content]="labelContent" [required]="required">
+  </app-label-horizontal>
+  <nz-form-control [nzSpan]="span" [nzErrorTip]="errorTip">
+    <nz-switch [nzDisabled]="disabled" [nzCheckedChildren]="checkedTemplate" [nzUnCheckedChildren]="unCheckedTemplate"
+      [formControl]="ngControl.control" (ngModelChange)="change.emit($event)"></nz-switch>
+    <ng-template #checkedTemplate>
+      <ng-container *ngIf="onContent else iconOn">{{ onContent }}</ng-container>
+      <ng-template #iconOn><i nz-icon nzType="check"></i></ng-template>
+    </ng-template>
+    <ng-template #unCheckedTemplate>{{ offContent }}</ng-template>
+  </nz-form-control>
+</nz-form-item>

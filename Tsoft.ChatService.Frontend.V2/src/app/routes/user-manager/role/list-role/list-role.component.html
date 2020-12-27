@@ -1,0 +1,177 @@
+<page-header-wrapper>
+  <nz-card>
+    <div nz-row>
+      <div nz-col nzSpan="12">
+        <!-- <h2>{{ 'catalog.country.grid.title' | translate }}</h2> -->
+        <h2>{{'user-manager.role.list.title' | translate }}</h2>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-select class="input-search" [(ngModel)]="request.listTextSearch" (ngModelChange)="nzOnSearch($event)"
+          nzMode="tags" nzPlaceHolder="{{ 'layout.search.placeholder' | translate }}">
+        </nz-select>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="12">
+        <app-button-reload (onClick)="reloadGrid()"></app-button-reload>
+        <app-button-create (click)="openCreateModal()" *ngIf="btnCreate && btnCreate.grantAccess">
+        </app-button-create>
+        <app-button-edit *ngIf="deleteIds.length === 1 && btnEdit && btnEdit.grantAccess"
+          (click)="deleteIds.length === 1 && openEditModal()">
+        </app-button-edit>
+        <app-button-delete *ngIf="(isAllDisplayDataChecked || isIndeterminate) && btnDelete && btnDelete.grantAccess"
+          (onClick)="deleteMany()">
+        </app-button-delete>
+      </div>
+      <div nz-col nzSpan="12">
+        <div nz-row>
+          <div nz-col nzSpan="6">
+            <nz-select class="select-search" nzPlaceHolder="Nhóm theo" nzAllowClear [ngModel]="groupBy"
+              (ngModelChange)="nzOnSearchGroup($event)">
+            </nz-select>
+          </div>
+          <div nz-col nzSpan="18">
+            <nz-radio-group class="float-right" [(ngModel)]="tableType" [nzButtonStyle]="'solid'">
+              <label nz-radio-button nzValue="true"><span><i nz-icon nzType="bars" nzTheme="outline"></i></span></label>
+              <label nz-radio-button nzValue="false"><span><i nz-icon nzType="appstore"
+                    nzTheme="outline"></i></span></label>
+            </nz-radio-group>
+            <nz-pagination class="float-right mr-2" [(nzPageSize)]="request.pageSize"
+              [(nzPageIndex)]="request.currentPage" (nzPageIndexChange)="nzPageIndexChange($event)"
+              [nzShowTotal]="totalTemplate" [(nzTotal)]="total">
+            </nz-pagination>
+            <ng-template #totalTemplate let-total>
+              {{ request.pageSize * (request.currentPage - 1) + 1 }}
+              -{{ request.pageSize * request.currentPage > total ? total : request.pageSize * request.currentPage }} /{{
+              total
+            }}
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div nz-row *ngIf="tableType == 'true'; else elseCard">
+      <nz-card style="width:100%;">
+        <nz-table #rowSelectionTable nzBordered [nzData]="lstData" [nzFrontPagination]="false"
+          (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzLoading]="isLoading">
+          <thead (nzSortChange)="nzSortChange($event)">
+            <tr class="ant-header-customize">
+              <th nzShowCheckbox nzWidth="50px" [(nzChecked)]="isAllDisplayDataChecked"
+                [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th>
+              <th nzWidth="50px" nzShowExpand *ngIf="expandable"></th>
+              <th *ngIf="expandable"></th>
+              <th nzWidth="50px" class="text-center">{{'user-manager.role.list.stt' | translate }}</th>
+              <th nzShowSort nzSortKey="">{{'user-manager.role.list.name' | translate }}</th>
+              <th nzShowSort nzSortKey="">{{'user-manager.role.list.code' | translate }}</th>
+              <th nzShowSort nzSortKey="">{{'user-manager.role.list.note' | translate }}</th>
+              <th nzShowSort nzSortKey="">{{'user-manager.role.list.status' | translate}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-template ngFor let-data let-idx="index" [ngForOf]="rowSelectionTable.data">
+              <tr [ngClass]="{ 'col-group': expandable }" (click)="!expandable && goToDetail(data)">
+                <td nzShowCheckbox *ngIf="!expandable" [(nzChecked)]="mapOfCheckedId[data.id]"
+                  (nzCheckedChange)="refreshStatus()"></td>
+                <td *ngIf="expandable"></td>
+                <td nzShowExpand *ngIf="expandable" [(nzExpand)]="data.expand"></td>
+
+                <td *ngIf="expandable" [ngClass]="{ 'col-group-text': expandable }">
+                  {{ data[groupBy] }}
+                </td>
+                <td class="text-center">{{ expandable ? '' : idx + 1 }}</td>
+                <td class="td-bold">{{ expandable ? '' : data.name }}</td>
+                <td>{{ expandable ? '' : data.code }}</td>
+                <td>{{ expandable ? '' : data.note }}</td>
+                <td class="text-center">
+                  <nz-tag *ngIf="data.isActive == true" [nzColor]="'green'">
+                    {{'user-manager.role.list.status.active' | translate}}
+                  </nz-tag>
+                  <nz-tag *ngIf="data.isActive == false" [nzColor]="'red'">
+                    {{'user-manager.role.list.status.inactive' | translate}}
+                  </nz-tag>
+                </td>
+              </tr>
+              <tr [nzExpand]="data.expand" *ngFor="let item of data.children" (click)="goToDetail(item)">
+                <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[item.id]" (nzCheckedChange)="refreshStatus()"></td>
+                <td></td>
+                <td></td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.code }}</td>
+                <td>{{ item.note }}</td>
+                <td class="text-center">
+                  <nz-tag *ngIf="item.isActive == true" [nzColor]="'green'">
+                    {{'user-manager.role.list.status.active' | translate}}
+                  </nz-tag>
+                  <nz-tag *ngIf="item.isActive == false" [nzColor]="'red'">
+                    {{'user-manager.role.list.status.inactive' | translate}}
+                  </nz-tag>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </nz-table>
+      </nz-card>
+    </div>
+    <ng-template #elseCard>
+      <div nz-row class="mt-2 card-kibana">
+        <div nz-col nzSpan="6" *ngFor="let data of flatData" class="mb-1">
+          <nz-card class="card-kibana-element w-95" nzTitle="{{ expandable ? data[groupBy] : '' }}">
+            <div *ngIf="expandable">
+              <div *ngFor="let item of data.children" nz-row class="d-flex children-expand d-flex-direction-column">
+                <div nz-row class="w-100">
+                  <app-label-kibana>{{'user-manager.role.list.name' | translate}}</app-label-kibana>
+                  {{item.name}}
+                </div>
+                <div nz-row class="w-100">
+                  <app-label-kibana>{{'user-manager.role.list.code' | translate}}</app-label-kibana>
+                  {{item.code}}
+                </div>
+                <div nz-row class="w-100">
+                  <app-label-kibana>{{'user-manager.role.list.note' | translate}}</app-label-kibana>
+                  {{item.note}}
+                </div>
+                <div nz-row class="w-100">
+                  <app-label-kibana>{{'user-manager.role.list.status' |  translate}}</app-label-kibana>
+                  <nz-tag *ngIf="item.isActive == true" [nzColor]="'green'">
+                    {{'user-manager.role.list.status.active' | translate}}
+                  </nz-tag>
+                  <nz-tag *ngIf="item.isActive == false" [nzColor]="'red'">
+                    {{'user-manager.role.list.status.inactive' | translate}}
+                  </nz-tag>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!expandable" class="d-flex d-flex-direction-column" (click)="!expandable">
+              <div nz-row class="w-100 children-expand">
+                <app-label-kibana>{{'user-manager.role.list.name' | translate}}</app-label-kibana>
+                {{data.name}}
+              </div>
+              <div nz-row class="w-100 children-expand">
+                <app-label-kibana>{{'user-manager.role.list.code' | translate}}</app-label-kibana>
+                {{data.code}}
+              </div>
+              <div nz-row class="w-100 children-expand">
+                <app-label-kibana>{{'user-manager.role.list.note' | translate}}</app-label-kibana>
+                {{data.note}}
+              </div>
+              <div nz-row class="w-100">
+                <app-label-kibana>{{'user-manager.role.list.status' |  translate}}</app-label-kibana>
+                <nz-tag *ngIf="data.isActive == true" [nzColor]="'green'">
+                  {{'user-manager.role.list.status.active' | translate}}
+                </nz-tag>
+                <nz-tag *ngIf="data.isActive == false" [nzColor]="'red'">
+                  {{'user-manager.role.list.status.inactive' | translate}}
+                </nz-tag>
+              </div>
+            </div>
+          </nz-card>
+        </div>
+      </div>
+    </ng-template>
+  </nz-card>
+</page-header-wrapper>
+<app-create-role [visible]="visibleCreateModal" (onCancel)="visibleCreateModal = false" (onCreated)="onCreated()">
+</app-create-role>
+<app-detail-role [isEdit]="isEdit" [visible]="visibleDetailModal" [id]="selectedId"
+  (onCancel)="visibleDetailModal = false" (onUpdated)="onUpdated()">
+</app-detail-role>

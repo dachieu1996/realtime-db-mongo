@@ -1,0 +1,14 @@
+<nz-form-item>
+  <ng-container *ngIf="!hideLabel">
+    <app-label-vertical *ngIf="!labelHorizontal" [content]="labelContent" [required]="required">
+    </app-label-vertical>
+    <app-label-horizontal *ngIf="labelHorizontal" [for]="name" [content]="labelContent" [required]="required">
+    </app-label-horizontal>
+  </ng-container>
+  <nz-form-control [nzSpan]="!hideLabel ? (labelHorizontal ? span : 24) : null" [nzErrorTip]="errorTip">
+    <nz-date-picker [hidden]="true" [nzFormat]="format" [formControl]="ngControl.control">
+    </nz-date-picker>
+    <input nz-input [name]="name" class="w-100" [attr.disabled]="disabled ? '' : null" type="datetime-local" (focusout)="onChangeDate($event)"
+      (keyup.enter)="onChangeDate($event)" [(ngModel)]="dateTime">
+  </nz-form-control>
+</nz-form-item>

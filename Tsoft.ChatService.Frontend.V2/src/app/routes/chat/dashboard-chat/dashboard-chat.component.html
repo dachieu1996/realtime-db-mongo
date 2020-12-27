@@ -1,0 +1,9 @@
+<div class="wrapper">
+  <div style="width:300px;height: 100%;overflow: auto;float: left">
+    <app-available-user [users]="users$ | async" [conversations]="conversations$ | async" [loading]="loading$ | async">
+    </app-available-user>
+  </div>
+  <div style="height: 100%">
+    <app-chat-area [selectedConversation]="selectedConversation$ | async"></app-chat-area>
+  </div>
+</div>

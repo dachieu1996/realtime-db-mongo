@@ -1,0 +1,11 @@
+<nz-form-item>
+  <app-label-horizontal [for]="name" [noColon]="noColon" [classLabel]="classLabel" [content]="labelContent"
+    [required]="required">
+  </app-label-horizontal>
+  <nz-form-control [nzSpan]="span" [nzErrorTip]="errorTip">
+    <nz-radio-group [formControl]="ngControl.control" nzName="radioApp" [nzDisabled]="disabled">
+      <label styleRadio="styleRadio" [ngClass]="{'radio-square' : styleRadio}" *ngFor="let data of listDataRadio"
+        nz-radio [nzValue]="data.value">{{data.label}}</label>
+    </nz-radio-group>
+  </nz-form-control>
+</nz-form-item>

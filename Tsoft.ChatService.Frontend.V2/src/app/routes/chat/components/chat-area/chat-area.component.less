@@ -1,0 +1,90 @@
+.wrapper-chat-area {
+  height: 100%;
+  overflow: auto;
+}
+
+.container-message-area {
+  background: url('https://www.teahub.io/photos/full/70-707627_whats-app-background.jpg');
+  padding: 20px;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.container-message-box {
+  background: white;
+  width: 100%;
+  display: relative;
+  position: sticky;
+  bottom: 0;
+  border: none;
+  padding: 13px;
+}
+
+[contenteditable] {
+  outline: 0px solid transparent;
+}
+
+[contenteditable]:empty:not(:focus):before {
+  content: attr(data-text)
+}
+
+/* Chat containers */
+.container {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+/* My chat container */
+
+.my-message {
+  min-width: 30%;
+  max-width: 60%;
+  float: right;
+  border-color: #4DBD74;
+  background-color: #cff7d4;
+}
+
+.other-message {
+  min-width: 30%;
+  max-width: 60%;
+  float: left;
+}
+
+
+/* Clear floats */
+.container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Style images */
+.container img {
+  float: left;
+  max-width: 60px;
+  width: 100%;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+/* Style the right image */
+.container img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right: 0;
+}
+
+/* Style time text */
+.time-right {
+  float: right;
+  color: #aaa;
+}
+
+/* Style time text */
+.time-left {
+  float: left;
+  color: #999;
+}

@@ -1,0 +1,19 @@
+<nz-card>
+  <div nz-row>
+    <div nz-col nzSpan="12">
+      <app-title-hearder-layout>{{ 'user-manager.role.create.role-permisson.content' | translate }}
+      </app-title-hearder-layout>
+    </div>
+  </div>
+  <div nz-row>
+    <!-- <div nz-col nzSpan="12"> -->
+    <nz-select class="input-search" [(ngModel)]="request.searchText" (ngModelChange)="nzOnSearch($event)" nzMode="tags"
+      nzPlaceHolder="{{ 'layout.search.placeholder' | translate }}">
+    </nz-select>
+    <!-- </div> -->
+  </div>
+  <nz-tree nzCheckable nzCheckable #tree [(nzData)]="nodes" disabled=true nzMultiple
+    [nzCheckedKeys]="listPermissonSelected" [nzExpandedKeys]="listPermissonSelected"
+    (nzCheckBoxChange)="nzEvent($event)">
+  </nz-tree>
+</nz-card>

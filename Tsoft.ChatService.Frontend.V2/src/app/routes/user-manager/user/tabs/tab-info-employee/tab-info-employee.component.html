@@ -1,0 +1,79 @@
+<nz-card>
+  <form nz-form [formGroup]="createForm">
+    <div nz-row [nzGutter]="18">
+      <div nz-col nzSpan="6">
+        <app-image-upload [avatarUrl]="avatarUrl" (onChangeImage)="onChangeImage($event)"></app-image-upload>
+      </div>
+      <div nz-col nzSpan="18">
+        <div nz-row [nzGutter]="18">
+          <div nz-col nzSpan="12">
+            <app-input-text labelContent="{{ 'user-manager.employee.create.name' | translate }}" [required]="true"
+              errorTip="{{ 'user-manager.employee.create.name.required' | translate }}" formControlName="fullname">
+            </app-input-text>
+          </div>
+          <div nz-col nzSpan="12">
+            <app-input-text labelContent="{{ 'user-manager.employee.create.note' | translate }}" formControlName="note">
+            </app-input-text>
+          </div>
+        </div>
+
+        <div nz-row [nzGutter]="18">
+          <div nz-col nzSpan="12">
+            <app-date-picker labelContent="{{ 'user-manager.employee.create.birthdate' | translate }}"
+              formControlName="birthDay"></app-date-picker>
+          </div>
+          <div nz-col nzSpan="12">
+            <app-input-text labelContent="{{ 'user-manager.employee.create.username' | translate }}" [required]="true"
+              errorTip="{{ 'user-manager.employee.create.username.required' | translate }}" formControlName="username">
+            </app-input-text>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="18">
+          <div nz-col nzSpan="12">
+            <app-input-email labelContent="{{ 'user-manager.employee.create.email' | translate }}" [required]="true"
+              errorTip="{{ 'user-manager.employee.create.email.required' | translate }}" formControlName="email">
+            </app-input-email>
+          </div>
+          <div nz-col nzSpan="12">
+            <!-- <app-input-text *ngIf="isDetail" labelContent="{{ 'user-manager.employee.create.password' | translate }}"
+              [required]="true" errorTip="{{ 'user-manager.employee.create.password.required' | translate }}" >
+            </app-input-text> -->
+            <app-input-text *ngIf="!isDetail" labelContent="{{ 'user-manager.employee.create.password' | translate }}"
+              [required]="true" errorTip="{{ 'user-manager.employee.create.password.required' | translate }}"
+              formControlName="password">
+            </app-input-text>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="18">
+          <div nz-col nzSpan="12">
+            <app-input-text labelContent="{{ 'user-manager.employee.create.phone' | translate }}"
+              errorTip="{{ 'user-manager.employee.create.phone.validate' | translate }}" formControlName="phone">
+            </app-input-text>
+          </div>
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <app-label-horizontal for="name" content="Giới tính">
+              </app-label-horizontal>
+              <nz-form-control [nzSpan]="16">
+                <nz-select formControlName="gender">
+                  <nz-option [nzValue]="0" nzLabel="Nữ"></nz-option>
+                  <nz-option [nzValue]="1" nzLabel="Nam"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="18">
+
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <app-switch labelContent="{{ 'user-manager.employee.create.isActive' | translate }}"
+                formControlName="isActive">
+              </app-switch>
+            </nz-form-item>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</nz-card>

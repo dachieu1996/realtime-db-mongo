@@ -1,0 +1,139 @@
+// #region PLACEHOLDER, IMPORTANT: don't remove
+@import '~@delon/theme/styles/index';
+@import '~@delon/abc/index';
+@import '~@delon/chart/index';
+@import 'app/layout/pro/styles/index';
+@import '~@delon/theme/styles/layout/fullscreen/index';
+@import './styles/index';
+@import './styles/theme';
+@import '~ng-zorro-antd/style/entry.less';
+
+/* Import basic styles */
+@import '~ng-zorro-antd/button/style/entry.less';
+
+/* Import styles of the component */
+@import './styles/utilities';
+@import '../node_modules/ng2-slim-loading-bar/style.css';
+// #endregion
+
+// -------- import official less file -----------
+//@import "../node_modules/ng-zorro-antd/ng-zorro-antd.less";
+
+// -------- override less var -----------
+@primary-color: #4dbd74;
+
+// @menu-dark-color: #faf4f4;
+// @menu-dark-bg: #204051;
+
+// @aside-collapsed-prefix: ~'.aside-collapsed';
+// @alain-pro-zindex : @zindex-base;
+// @alain-pro-ease : cubic-bezier(0.25, 0, 0.15, 1);
+@font-size-base: 12px;
+
+@alain-pro-header-height: 46px;
+@layout-header-height: 46px;
+// @alain-pro-header-bg : #fff;
+// @alain-pro-header-box-shadow : 0 1px 4px rgba(0, 21, 41, 0.08);
+@alain-pro-header-color: rgba(256, 256, 256, 0.8);
+@alain-pro-header-hover-color: #fff;
+// @alain-pro-header-hover-bg : rgba(0, 0, 0, 0.025);
+// @alain-pro-header-search-width : 210px;
+// @alain-pro-header-widgets-icon-fs : 16px;
+
+// @alain-pro-top-nav-only-icon-fs : 16px;
+
+@alain-pro-light-color: #fff;
+// @alain-pro-light-slider-shadow : 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+
+// @alain-pro-logo-font-size : 20px;
+// @alain-pro-logo-font-family : 'Myriad Pro',
+// 'Helvetica Neue',
+// Arial,
+// Helvetica,
+// sans-serif;
+
+// @alain-pro-content-margin : 24px;
+// @alain-pro-wide : 1200px;
+
+@alain-pro-sider-menu-width: 235px;
+@alain-pro-sider-menu-img-wh: 14px;
+
+/**
+ * 侧边栏固定时滚动条显示风格：
+ * - hide: 隐藏滚动条（默认）
+ * - show: 显示美化后滚动条
+ */
+// @alain-pro-sider-fixed-scroll-mode : 'hide';
+// @alain-pro-sider-scrollbar-width : 0;
+// @alain-pro-sider-scrollbar-height : 0;
+// @alain-pro-sider-scrollbar-track-color : transparent;
+// @alain-pro-sider-scrollbar-thumb-color : transparent;
+@layout-sider-background: @alain-pro-light-color;
+
+// @brand-bordered-color : rgba(24, 28, 33, 0.06);
+// @brand-scroll-width : 20px;
+
+@menu-collapsed-width: 60px;
+
+/* Hidden logo amchart */
+.chartdiv div:nth-child(2) svg:nth-child(1) g[aria-labelledby$='-title'] {
+  display: none;
+}
+
+.alain-pro__menu-item {
+  border-bottom: solid 1px #ccc7c74a;
+}
+
+.alain-pro__menu-title-text {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.alain-pro__menu-icon {
+  font-size: 14px;
+}
+
+.alain-pro__header {
+  background-color: @primary-color;
+
+  h1 {
+    display: inline-block;
+    margin: 0 0 0 12px;
+    color: white;
+    font-weight: 600;
+    font-size: @alain-pro-logo-font-size;
+    font-family: @alain-pro-logo-font-family;
+  }
+}
+
+.page-header .ant-breadcrumb {
+  margin-bottom: 8px;
+}
+
+.alain-pro__page-header-content {
+  margin: 16px 16px 0;
+}
+
+.alain-pro__body {
+  margin: 16px 16px 0 !important;
+}
+
+.aside-collapsed .alain-pro__sider-logo h4 {
+  display: none;
+}
+
+//-- FORMAT STYLE THEME CORE--//
+@font-family: sans-serif, 'Roboto', Arial, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+  'Helvetica Neue', Helvetica;
+
+@table-row-hover-bg: #ccc;
+
+.@{table-prefix-cls} {
+  &-thead > tr > th {
+    font-weight: 600;
+  }
+}
+.alain-pro__side-nav-wrap {
+  font-family: 'Roboto', Arial, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+    Helvetica, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+}

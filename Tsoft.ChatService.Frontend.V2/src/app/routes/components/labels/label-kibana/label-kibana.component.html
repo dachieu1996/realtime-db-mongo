@@ -1,0 +1,5 @@
+<span [ngStyle]="{'font-style': fontStyle, 'fontSize': fontSize, 'font-weight': fontWeight,
+                  'color': color}">
+  <ng-content></ng-content>
+  <ng-container *ngIf="!noColon">: </ng-container>
+</span>

@@ -1,0 +1,13 @@
+<app-modal [visible]="visible" [loading]="loading" (onSave)="submit()" (onCancel)="handleCancel()"
+  (openModal)="openModal()" title="{{ 'user-manager.employee.create.title' | translate }}">
+  <div nz-row>
+  </div>
+  <nz-tabset>
+    <nz-tab nzTitle="{{'user-manager.employee.create.info-employee.title' | translate}}">
+      <app-tab-info-employee #infoEmployee></app-tab-info-employee>
+    </nz-tab>
+    <nz-tab nzTitle="{{'user-manager.employee.create.employee-permisson.title' | translate}}">
+      <app-tab-permisson-employee #permissonEmployee></app-tab-permisson-employee>
+    </nz-tab>
+  </nz-tabset>
+</app-modal>

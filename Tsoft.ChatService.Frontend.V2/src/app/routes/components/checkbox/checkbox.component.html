@@ -1,0 +1,22 @@
+<nz-form-item>
+  <!-- <app-label-horizontal [for]="name" [classLabel]="classLabel" [content]="labelContent" [required]="required">
+  </app-label-horizontal> -->
+  <ng-container *ngIf="!hideLabel">
+    <app-label-vertical *ngIf="!labelHorizontal" [content]="labelContent" [required]="required">
+    </app-label-vertical>
+    <app-label-horizontal *ngIf="labelHorizontal" [content]="labelContent" [required]="required" [span]="24 - span">
+    </app-label-horizontal>
+  </ng-container>
+  <nz-form-control [nzSpan]="span" [nzErrorTip]="errorTip">
+    <label nz-checkbox [nzDisabled]="disabled" [formControl]="ngControl.control">
+      <nz-tag [nzColor]=" ngControl.control.value ? checkedColor : unCheckedColor">
+        <span *ngIf="ngControl.control.value else inActive">
+          {{ checkedContent }} </span>
+        <ng-template #inActive>
+          <span>
+            {{ unCheckedContent }} </span>
+        </ng-template>
+      </nz-tag>
+    </label>
+  </nz-form-control>
+</nz-form-item>
