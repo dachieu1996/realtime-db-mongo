@@ -6,7 +6,8 @@ export interface User {
   currentRoom: string,
   device: string,
   status: UserStatus,
-  lastModifiedOnDate: Date
+  lastModifiedOnDate: Date,
+  createdOnDate: Date
 }
 
 export enum UserStatus {

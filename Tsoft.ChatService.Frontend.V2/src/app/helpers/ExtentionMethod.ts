@@ -71,10 +71,10 @@ export const formatPhoneNumber = function (phone) {
   return phone;
 }
 
-export const AccendingSort = function (date1, date2) {
+export const AccendingDatetimeSort = function (date1, date2) {
   return Date.parse(date1) - Date.parse(date2)
 }
 
-export const DescendingSort = function (date1, date2) {
+export const DescendingDatetimeSort = function (date1, date2) {
   return Date.parse(date2) - Date.parse(date1)
 }

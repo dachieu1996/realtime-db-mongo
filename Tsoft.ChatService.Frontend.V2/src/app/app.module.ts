@@ -117,4 +117,4 @@ import { LayoutModule } from './layout/layout.module';
   providers: [...LANG_PROVIDES, ...INTERCEPTOR_PROVIDES, ...I18NSERVICE_PROVIDES, ...APPINIT_PROVIDES],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

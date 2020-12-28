@@ -1,7 +1,7 @@
 <div id="message-area" class="wrapper-chat-area">
   <div class="container-message-area">
     <ng-container *ngIf="selectedConversation">
-      <div nz-row *ngFor="let message of selectedConversation.messages">
+      <div nz-row *ngFor="let message of messages">
         <div *ngIf="message.senderId != myId" class="container other-message">
           <img style="width: 50px; height: 50px" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
             alt="Avatar">

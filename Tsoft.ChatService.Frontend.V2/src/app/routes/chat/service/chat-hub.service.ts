@@ -1,3 +1,4 @@
+import { Conversation } from './../models/conversation';
 import { UserStatus } from './../models/user';
 import { BehaviorSubject } from 'rxjs';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
@@ -24,16 +25,19 @@ export class ChatHubService {
     this.startConnection();
   }
 
-  sendMessage(message: {
-    content: string,
-    receiverId?: string,
-    conversationId?: string
+  sendMessage(payload: {
+    message: string,
+    conversation: Conversation
   }) {
-    this._hubConnection.invoke('SendMessage', message);
+    this._hubConnection.invoke('SendMessage', payload);
   }
 
-  getAllConversations() {
+  getAllConversations(): Promise<Conversation[]> {
     return this._hubConnection.invoke('GetAllConversations');
+  }
+
+  getMessagesByConversationId(conversationId: string, offset: number, size: number) {
+    return this._hubConnection.invoke('GetMessagesByConversationId', conversationId, offset, size);
   }
 
   getAllUsers() {

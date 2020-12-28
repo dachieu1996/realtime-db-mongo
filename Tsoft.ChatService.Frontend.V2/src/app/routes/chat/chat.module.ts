@@ -1,5 +1,8 @@
+import { messagesReducer } from './store/message/message.reducer';
+import { usersReducer } from './store/user/user.reducer';
+import { UserEffects } from './store/user/user.effects';
+import { ConversationEffects } from './store/conversation/conversation.effect';
 import { TokenService } from '@delon/auth';
-import { conversationsReducer } from './store/conversation/reducer';
 import { environment } from '@env/environment';
 
 import { ChatHubService } from './service/chat-hub.service';
@@ -13,8 +16,9 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '@shared';
 import { ComponentsModule } from '../components/components.module';
 import { StoreModule } from '@ngrx/store';
-import { usersReducer } from './store/user/reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
+import { conversationsReducer } from './store/conversation/conversation.reducer';
 @NgModule({
   imports: [
     CommonModule,
@@ -22,13 +26,15 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     ComponentsModule,
     ChatRoutingModule,
     StoreModule.forRoot({
+      conversations: conversationsReducer,
       users: usersReducer,
-      conversations: conversationsReducer
+      messages: messagesReducer
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production, // Restrict extension to log-only mode
     }),
+    EffectsModule.forRoot([ConversationEffects, UserEffects]),
   ],
   declarations: [
     DashboardChatComponent,
