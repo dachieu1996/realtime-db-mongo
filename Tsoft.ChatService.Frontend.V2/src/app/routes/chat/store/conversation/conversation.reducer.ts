@@ -38,7 +38,11 @@ export const conversationsReducer = createReducer(
   on(updateConversationSuccessAction, (state, { conversation }) => {
     const updateConversation: Update<Conversation> = {
       id: conversation.id,
-      changes: conversation
+      changes: {
+        lastMessage: conversation.lastMessage,
+        lastActivityTime: conversation.lastActivityTime,
+        participants: conversation.participants,
+      }
     };
     return adapter.updateOne(updateConversation, state);
   })
