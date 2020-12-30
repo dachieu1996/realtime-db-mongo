@@ -28,12 +28,10 @@ export const selectSelectedConversation = createSelector(
 
 export const selectMessagesState = createFeatureSelector<fromMessage.MessagesState>("messages");
 
-// export const selectMessagesInSelectedConversation = createSelector(
-//   selectConversationsState,
-//   selectMessagesState,
-//   (conversationState, messageState) => {
-//     debugger;
-//     return null;
-//     // return messages.filter(message => message.conversationId == conversationState.selectedConversationId)
-//   }
-// );
+export const selectMessagesInSelectedConversation = createSelector(
+  selectConversationsState,
+  selectAllMessages,
+  (conversationState, messages) => {
+    return messages.filter(message => message.conversationId == conversationState.selectedConversationId)
+  }
+);

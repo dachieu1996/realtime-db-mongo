@@ -25,13 +25,24 @@ export class AvailableUserComponent implements OnInit, OnChanges {
 
   loading: boolean = true;
 
-  listData: Conversation[] = []
+  listData: Conversation[] = new Array(10).fill({}).map((_i, index) => {
+    return {
+      id: 'Demo',
+      name: 'Demo',
+      avatarUrl: '',
+      lastMessage:
+        'We supply a series of design principles, practical patterns and high quality design resources ' +
+        '(Sketch and Axure), to help people create their product prototypes beautifully and efficiently.'
+    };
+  });
+  firstLoad: boolean = true;
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.conversationLoading || changes.userLoading) {
       this.loading = this.conversationLoading || this.userLoading
-      if (this.loading == false) {
+      if (this.loading == false && this.firstLoad) {
         this.buildListData();
+        this.firstLoad = false;
       }
       // if (this.loading == false) {
       //   this.listData = [...this.conversations]

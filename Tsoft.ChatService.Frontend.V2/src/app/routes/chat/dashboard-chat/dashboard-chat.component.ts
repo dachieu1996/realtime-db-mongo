@@ -1,7 +1,7 @@
 import { selectAllMessages } from './../store/message/message.selector';
 import { allUsersRequestedAction } from './../store/user/user.action';
 import { selectAllUsers, selectAllUsersLoading } from './../store/user/user.selector';
-import { selectAllConversations, selectAllConversationsLoading, selectSelectedConversation } from './../store/conversation/conversation.selector';
+import { selectAllConversations, selectAllConversationsLoading, selectSelectedConversation, selectMessagesInSelectedConversation } from './../store/conversation/conversation.selector';
 import { allConversationsRequestedAction, updateConversationSuccessAction } from './../store/conversation/conversation.action';
 
 import { Message } from './../models/message';
@@ -29,7 +29,7 @@ export class DashboardChatComponent implements OnInit {
   conversationLoading$ = this.store.select(selectAllConversationsLoading);
   userLoading$ = this.store.select(selectAllUsersLoading);
 
-  messages$ = this.store.select(selectAllMessages);
+  messages$ = this.store.select(selectMessagesInSelectedConversation);
 
   conversations$ = this.store.select(selectAllConversations);
   user$ = this.store.select(selectAllUsers);
@@ -97,7 +97,6 @@ export class DashboardChatComponent implements OnInit {
     //   }
     // })
     this.chatHubService.newMessageEvent$.subscribe(data => {
-      console.log('newMessage', data)
       if (data) {
         this.store.dispatch(receiveMessageSuccessAction({ message: data.message }));
         this.store.dispatch(updateConversationSuccessAction({ conversation: data.conversation }));

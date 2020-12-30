@@ -13,7 +13,7 @@ export enum ConversationActionTypes {
   UpdateConversationSuccess = '[Detail Conversation] Upadte Conversation Success',
 
   SelectConversation = '[List Conversations] Select Conversation',
-  AddManyConversations = '[List Conversations] Add Conversation Success',
+  AddManyConversations = '[List Conversations] Add Conversations Success',
 
   ConversationSaved = '[Edit Conversation Dialog] Conversation Saved',
   MessagesRequested = '[Detail Conversation] Messages Requested',
