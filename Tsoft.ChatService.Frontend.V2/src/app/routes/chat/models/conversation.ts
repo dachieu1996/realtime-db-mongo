@@ -1,4 +1,4 @@
-import { User } from './user';
+import { User, UserStatus } from './user';
 import { Message } from './message';
 export interface Conversation {
   id: string,
@@ -8,7 +8,8 @@ export interface Conversation {
   lastActivityTime?: Date,
   participants?: string[],
   receiverId?: string,
-  avatarUrl?: string
+  avatarUrl?: string,
+  status?: UserStatus
 }
 
 export enum ConversationType {

@@ -8,8 +8,9 @@ import { filter, map, mergeMap, withLatestFrom, tap } from "rxjs/operators";
 
 
 import { select, Store } from '@ngrx/store';
-import { ConversationActionTypes, messagesCancelledAction, messagesLoadedAction, allConversationsLoadedAction, allConversationsCancelledAction } from './conversation.action';
+import { ConversationActionTypes, messagesCancelledAction, messagesLoadedAction, allConversationsLoadedAction, allConversationsCancelledAction, updateStatusUserSuccessAction } from './conversation.action';
 import { of } from 'rxjs';
+import { User } from '../../models/user';
 
 @Injectable()
 export class ConversationEffects {
@@ -61,6 +62,26 @@ export class ConversationEffects {
       ),
       map(messages => messagesLoadedAction({ messages }))
     );
+
+  // @Effect()
+  // userStatus$ = this.actions$
+  //   .pipe(
+  //     ofType(ConversationActionTypes.AllConversationsRequested),
+  //     withLatestFrom(this.store.pipe(select(selectAllConversations))),
+  //     filter(([action, allConversations]) => {
+  //       if (allConversations.length > 0)
+  //         return false;
+  //       else
+  //         return true;
+  //     }),
+  //     mergeMap(async (): Promise<User> => {
+  //       let user = await this.chatHubService.listenUserStatus();
+  //       return user;
+  //     }),
+  //     map(user => updateStatusUserSuccessAction({user: user}))
+  //   );
+
+
 
   @Effect({ dispatch: false })
   sendMessageOnConversation$ = this.actions$

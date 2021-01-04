@@ -1,5 +1,5 @@
 import { selectSelectedConversation, selectConversations } from './../store/conversation/selectors';
-import { loadConversationAction, loadConversationSuccessAction, addMessageToConversationAction } from './../store/conversation/actions';
+import { loadConversationAction, loadConversationSuccessAction, addMessageToConversationAction, userPrivateOnline } from './../store/conversation/actions';
 import { Message } from './../models/message';
 import { UserStatus } from './../models/user';
 import { loadUsersAction, loadUsersSuccessAction } from './../store/user/actions';
@@ -64,7 +64,10 @@ export class DashboardChatComponent implements OnInit {
         this.users[index] = data;
         const users = [...this.users];
         // this.users$.next(this.users);
-        this.store.dispatch(loadUsersSuccessAction({ users }));
+        //this.store.dispatch(loadUsersSuccessAction({ users }));
+        this.store.dispatch(userPrivateOnline({ users: data }))
+
+
       }
     })
 
@@ -74,7 +77,8 @@ export class DashboardChatComponent implements OnInit {
         this.users[index] = data;
         let users = [...this.users];
         // this.users$.next(this.users);
-        this.store.dispatch(loadUsersSuccessAction({ users }));
+        //this.store.dispatch(loadUsersSuccessAction({ users }));
+        this.store.dispatch(userPrivateOnline({ users: data }))
       }
     })
     this.chatHubService.userBusyEvent$.subscribe(data => {
@@ -84,8 +88,9 @@ export class DashboardChatComponent implements OnInit {
         this.users = [...this.users];
         // this.users$.next(this.users);
         let users = [...this.users];
+        console.log("userbusy", this.users);
+        this.store.dispatch(userPrivateOnline({ users: data }))
 
-        this.store.dispatch(loadUsersSuccessAction({ users }));
       }
     })
     this.chatHubService.newMessageEvent$.subscribe(data => {

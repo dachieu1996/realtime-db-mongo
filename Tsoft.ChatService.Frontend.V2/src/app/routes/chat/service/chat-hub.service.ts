@@ -1,5 +1,5 @@
 import { Conversation } from './../models/conversation';
-import { UserStatus } from './../models/user';
+import { User, UserStatus } from './../models/user';
 import { BehaviorSubject } from 'rxjs';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { environment } from '@env/environment';
@@ -88,7 +88,11 @@ export class ChatHubService {
       this.addUserEvent$.next(data);
     });
   }
-
+  listenUserStatus() {
+    this._hubConnection.on('statusUser', (data: User) => {
+      this.userOfflineEvent$.next(data);
+    });
+  }
   listenUserOnline() {
     this._hubConnection.on('userOnline', (data: any) => {
       this.userOnlineEvent$.next(data);

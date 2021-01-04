@@ -8,9 +8,9 @@
               <div class="avatar">
                 <img *ngIf="item.avatarUrl" class="avatar" [src]="formatUrlImage(item.avatarUrl)">
                 <div *ngIf="!item.avatarUrl" class="text avatar">{{ getName(item)?.charAt(0) }} </div>
-                <div *ngIf="item.status == 1" class="online"></div>
-                <div *ngIf="item.status == 0"></div>
-                <div *ngIf="item.status == 2" class="busy"></div>
+                <div *ngIf="item.status == UserStatus.ONLINE" class="online"></div>
+                <div *ngIf="item.status == UserStatus.OFFLINE"></div>
+                <div *ngIf="item.status == UserStatus.BUSY" class="busy"></div>
               </div>
             </ng-template>
             <ng-template #nzTitle><strong>{{ getName(item) }}</strong></ng-template>

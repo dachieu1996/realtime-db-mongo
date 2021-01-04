@@ -217,7 +217,6 @@ namespace Tsoft.ChatService.Hubs
         public async Task SendStatus(Status status)
         {
             var user = await _chatHubService.GetUserById(IdentityId);
-
             if (status == Status.BUSY)
             {
                 user.Device = GetDevice();

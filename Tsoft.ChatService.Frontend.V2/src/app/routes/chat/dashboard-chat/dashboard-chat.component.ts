@@ -15,6 +15,7 @@ import * as signalR from "@aspnet/signalr";
 import { select, Store } from '@ngrx/store';
 import { receiveMessageSuccessAction } from '../store/message/message.actions';
 import { selectAll } from '../store/message/message.reducer';
+import { Conversation } from '../models/conversation';
 
 @Component({
   selector: 'app-dashboard-chat',
@@ -34,6 +35,8 @@ export class DashboardChatComponent implements OnInit {
   conversations$ = this.store.select(selectAllConversations);
   user$ = this.store.select(selectAllUsers);
 
+  allConversations: Conversation[];
+
   @HostListener('document:visibilitychange', ['$event'])
   visibilitychange() {
     if (this.chatHubService.isConnectionIsEstablished()) {
@@ -50,12 +53,21 @@ export class DashboardChatComponent implements OnInit {
     private chatHubService: ChatHubService
   ) { }
   ngOnInit() {
+    // this.chatHubService.userOnlineEvent$.subscribe(data => {
+    //   console.log("data", data);
+
+    // })
+    this.conversations$.subscribe(allConversations => {
+      this.allConversations = allConversations;
+    })
+
     this.chatHubService.startedEvent$.subscribe(async response => {
       if (response) {
         this.store.dispatch(allConversationsRequestedAction());
         this.store.dispatch(allUsersRequestedAction());
         // await this.fetchAllConversations();
         // await this.fetchRoomsAndUser();
+
       }
     })
 
@@ -96,6 +108,7 @@ export class DashboardChatComponent implements OnInit {
     //     this.store.dispatch(loadUsersSuccessAction({ users }));
     //   }
     // })
+
     this.chatHubService.newMessageEvent$.subscribe(data => {
       if (data) {
         this.store.dispatch(receiveMessageSuccessAction({ message: data.message }));

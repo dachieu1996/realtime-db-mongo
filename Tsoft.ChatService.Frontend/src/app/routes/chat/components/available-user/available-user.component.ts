@@ -1,23 +1,22 @@
 import { reorderConversationAction, joinConversationAction } from './../../store/conversation/actions';
 import { AppState } from './../../store/state';
-import { User } from './../../models/user';
+import { UserStatus } from './../../models/user';
 import { Conversation, ConversationType } from './../../models/conversation';
 import { DescendingSort } from './../../../../helpers/ExtentionMethod';
-import { Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Inject } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, Inject } from '@angular/core';
 import { environment } from '@env/environment';
-import { TokenService, DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
+import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-available-user',
   templateUrl: './available-user.component.html',
-  styleUrls: ['./available-user.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./available-user.component.less']
 
 })
 export class AvailableUserComponent implements OnInit, OnChanges {
   @Input('loading') loading = true;
-  @Input('users') users: User[] = [];
+  @Input('users') users;
   @Input('conversations') conversations: Conversation[] = [];
 
   listData: Conversation[] = new Array(10).fill({}).map((_i, index) => {
@@ -34,8 +33,10 @@ export class AvailableUserComponent implements OnInit, OnChanges {
     if (changes.loading) {
       if (this.loading == false) {
         this.buildListConversation()
-        this.ref.detectChanges();
       }
+    }
+    if (changes.conversations) {
+      this.listData = this.conversations;
     }
   }
 
@@ -48,7 +49,6 @@ export class AvailableUserComponent implements OnInit, OnChanges {
   }
   constructor(
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-    private ref: ChangeDetectorRef,
     private store: Store<AppState>,
   ) { }
 
@@ -58,6 +58,7 @@ export class AvailableUserComponent implements OnInit, OnChanges {
 
   // -- EVENTS -- //
   onClickItem(item) {
+    console.log('item', item);
     this.store.dispatch(joinConversationAction({ conversation: item }));
   }
   // ----------- //
@@ -133,6 +134,10 @@ export class AvailableUserComponent implements OnInit, OnChanges {
       return item.fullname;
     if (item.name)
       return item.name;
+  }
+
+  get UserStatus() {
+    return UserStatus;
   }
   // ------------- //
 }

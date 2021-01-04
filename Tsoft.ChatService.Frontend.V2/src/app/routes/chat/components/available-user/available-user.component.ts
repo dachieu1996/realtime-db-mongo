@@ -20,6 +20,7 @@ import { Dictionary } from '@ngrx/entity';
 export class AvailableUserComponent implements OnInit, OnChanges {
   @Input('conversationLoading') conversationLoading;
   @Input('userLoading') userLoading;
+
   @Input('users') users: User[] = [];
   @Input('conversations') conversations: Conversation[] = [];
 
