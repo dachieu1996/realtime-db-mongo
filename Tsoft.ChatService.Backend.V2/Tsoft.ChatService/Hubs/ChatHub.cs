@@ -78,9 +78,10 @@ namespace Tsoft.ChatService.Hubs
 
 
                 // Check Conversation is exist
-                foreach(var userId in conversation.Participants)
+                foreach (var userId in conversation.Participants)
                 {
-                    foreach(var connectionId in _userConnectionMapping.GetConnections(userId)){
+                    foreach (var connectionId in _userConnectionMapping.GetConnections(userId))
+                    {
                         await Groups.AddToGroupAsync(connectionId, conversation.Id.ToString());
                     }
                 }
@@ -222,23 +223,19 @@ namespace Tsoft.ChatService.Hubs
             {
                 user.Device = GetDevice();
                 user.Status = Status.BUSY;
-                var result = await _chatHubService.SaveUser(user);
-                await Clients.All.SendAsync(Action.USER_BUSY, result);
             }
             else if (status == Status.ONLINE)
             {
                 user.Device = GetDevice();
                 user.Status = Status.ONLINE;
-                var result = await _chatHubService.SaveUser(user);
-                await Clients.All.SendAsync(Action.USER_ONLINE, result);
             }
             else if (status == Status.OFFLINE)
             {
                 user.Device = GetDevice();
                 user.Status = Status.OFFLINE;
-                var result = await _chatHubService.SaveUser(user);
-                await Clients.All.SendAsync(Action.USER_OFFLINE, result);
             }
+            var result = await _chatHubService.SaveUser(user);
+            await Clients.All.SendAsync(Action.CHANGED_USER_STATUS, result);
 
         }
 
@@ -264,9 +261,10 @@ namespace Tsoft.ChatService.Hubs
 
     public static class Action
     {
-        public static string USER_ONLINE = "userOnline";
-        public static string USER_BUSY = "userBusy";
-        public static string USER_OFFLINE = "userOffline";
+        //public static string USER_ONLINE = "userOnline";
+        //public static string USER_BUSY = "userBusy";
+        //public static string USER_OFFLINE = "userOffline";
         public static string ADD_USER = "addUser";
+        public static string CHANGED_USER_STATUS = "changedUserStatus";
     }
 }

@@ -66,36 +66,45 @@ export class DashboardChatComponent implements OnInit {
     //   }
     // })
 
-    // this.chatHubService.userOnlineEvent$.subscribe(data => {
-    //   if (data && this.users) {
-    //     let index = this.users.findIndex(x => x.id == data.id);
-    //     this.users[index] = data;
-    //     const users = [...this.users];
-    //     // this.users$.next(this.users);
-    //     this.store.dispatch(loadUsersSuccessAction({ users }));
-    //   }
-    // })
+    this.chatHubService.userOnlineEvent$.subscribe(data => {
+      console.log('userOnlineEvent', data)
+      // if (data && this.users) {
+      //   let index = this.users.findIndex(x => x.id == data.id);
+      //   this.users[index] = data;
+      //   const users = [...this.users];
+      //   // this.users$.next(this.users);
+      //   this.store.dispatch(loadUsersSuccessAction({ users }));
+      // }
+    })
 
-    // this.chatHubService.userOfflineEvent$.subscribe(data => {
-    //   if (data && this.users) {
-    //     let index = this.users.findIndex(x => x.id == data.id);
-    //     this.users[index] = data;
-    //     let users = [...this.users];
-    //     // this.users$.next(this.users);
-    //     this.store.dispatch(loadUsersSuccessAction({ users }));
-    //   }
-    // })
-    // this.chatHubService.userBusyEvent$.subscribe(data => {
-    //   if (data && this.users) {
-    //     let index = this.users.findIndex(x => x.id == data.id);
-    //     this.users[index] = data;
-    //     this.users = [...this.users];
-    //     // this.users$.next(this.users);
-    //     let users = [...this.users];
+    this.chatHubService.userOfflineEvent$.subscribe(data => {
+      console.log('userOfflineEvent', data)
 
-    //     this.store.dispatch(loadUsersSuccessAction({ users }));
-    //   }
-    // })
+      // if (data && this.users) {
+      //   let index = this.users.findIndex(x => x.id == data.id);
+      //   this.users[index] = data;
+      //   let users = [...this.users];
+      //   // this.users$.next(this.users);
+      //   this.store.dispatch(loadUsersSuccessAction({ users }));
+      // }
+    })
+    this.chatHubService.userBusyEvent$.subscribe(data => {
+      console.log('userBusyEvent', data)
+
+      // if (data && this.users) {
+      //   let index = this.users.findIndex(x => x.id == data.id);
+      //   this.users[index] = data;
+      //   this.users = [...this.users];
+      //   // this.users$.next(this.users);
+      //   let users = [...this.users];
+
+      //   this.store.dispatch(loadUsersSuccessAction({ users }));
+      // }
+    })
+    this.chatHubService.changedUserStatusEvent$.subscribe(data => {
+      console.log('changedUserStatusEvent', data)
+
+    })
     this.chatHubService.newMessageEvent$.subscribe(data => {
       if (data) {
         this.store.dispatch(receiveMessageSuccessAction({ message: data.message }));

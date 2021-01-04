@@ -16,6 +16,7 @@ export class ChatHubService {
   public userOnlineEvent$ = new BehaviorSubject(null);
   public userOfflineEvent$ = new BehaviorSubject(null);
   public userBusyEvent$ = new BehaviorSubject(null);
+  public changedUserStatusEvent$ = new BehaviorSubject(null);
   public newMessageEvent$ = new BehaviorSubject(null);
   constructor(
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
@@ -107,6 +108,11 @@ export class ChatHubService {
   listenNewMessage() {
     this._hubConnection.on('newMessage', (data: any) => {
       this.newMessageEvent$.next(data);
+    });
+  }
+  listtenChangedUserStatus() {
+    this._hubConnection.on('changedUserStatus', (data: any) => {
+      this.changedUserStatusEvent$.next(data);
     });
   }
 }
