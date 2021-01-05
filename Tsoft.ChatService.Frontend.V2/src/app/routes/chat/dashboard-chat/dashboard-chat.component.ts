@@ -73,6 +73,7 @@ export class DashboardChatComponent implements OnInit {
       if (response) {
         this.store.dispatch(allConversationsRequestedAction());
         this.store.dispatch(allUsersRequestedAction());
+        this.chatHubService.sendStatus(UserStatus.ONLINE);
         // await this.fetchAllConversations();
         // await this.fetchRoomsAndUser();
 

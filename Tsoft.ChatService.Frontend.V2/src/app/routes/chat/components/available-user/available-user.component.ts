@@ -110,6 +110,7 @@ export class AvailableUserComponent implements OnInit, OnChanges {
           avatarUrl: user.avatarUrl,
           lastActivityTime: user.createdOnDate,
           participants: [this.tokenService.get().id, user.id],
+          status: user.status
         })
       } else {
         let conversation = { ...dictUserConversation[user.id] };
