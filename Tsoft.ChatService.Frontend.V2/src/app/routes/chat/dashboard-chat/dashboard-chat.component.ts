@@ -2,7 +2,7 @@ import { selectAllMessages } from './../store/message/message.selector';
 import { allUsersRequestedAction } from './../store/user/user.action';
 import { selectAllUsers, selectAllUsersLoading } from './../store/user/user.selector';
 import { selectAllConversations, selectAllConversationsLoading, selectSelectedConversation, selectMessagesInSelectedConversation } from './../store/conversation/conversation.selector';
-import { allConversationsRequestedAction, updateConversationSuccessAction } from './../store/conversation/conversation.action';
+import { allConversationsRequestedAction, updateConversationSuccessAction, updateStatusUserSuccessAction } from './../store/conversation/conversation.action';
 
 import { Message } from './../models/message';
 import { UserStatus } from './../models/user';
@@ -15,7 +15,7 @@ import * as signalR from "@aspnet/signalr";
 import { select, Store } from '@ngrx/store';
 import { receiveMessageSuccessAction } from '../store/message/message.actions';
 import { selectAll } from '../store/message/message.reducer';
-import { Conversation } from '../models/conversation';
+import { Conversation, ConversationType } from '../models/conversation';
 
 @Component({
   selector: 'app-dashboard-chat',
@@ -59,8 +59,16 @@ export class DashboardChatComponent implements OnInit {
     // })
     this.conversations$.subscribe(allConversations => {
       this.allConversations = allConversations;
-    })
+      console.log("allConver", this.allConversations);
 
+    })
+    let index;
+    this.chatHubService.changedUserStatusEvent$.subscribe(data => {
+      if (data != null) {
+        index = this.allConversations.findIndex(item => item.participants.some(item1 => item1.includes(data.id)) && item.type == ConversationType.PRIVATE);
+        this.store.dispatch(updateStatusUserSuccessAction({ conversation: this.allConversations[index], status: data.status }));
+      }
+    })
     this.chatHubService.startedEvent$.subscribe(async response => {
       if (response) {
         this.store.dispatch(allConversationsRequestedAction());
@@ -79,34 +87,43 @@ export class DashboardChatComponent implements OnInit {
     // })
 
     // this.chatHubService.userOnlineEvent$.subscribe(data => {
-    //   if (data && this.users) {
-    //     let index = this.users.findIndex(x => x.id == data.id);
-    //     this.users[index] = data;
-    //     const users = [...this.users];
-    //     // this.users$.next(this.users);
-    //     this.store.dispatch(loadUsersSuccessAction({ users }));
-    //   }
+    //   console.log('userOnlineEvent', data)
+    //   // if (data && this.users) {
+    //   //   let index = this.users.findIndex(x => x.id == data.id);
+    //   //   this.users[index] = data;
+    //   //   const users = [...this.users];
+    //   //   // this.users$.next(this.users);
+    //   //   this.store.dispatch(loadUsersSuccessAction({ users }));
+    //   // }
     // })
 
     // this.chatHubService.userOfflineEvent$.subscribe(data => {
-    //   if (data && this.users) {
-    //     let index = this.users.findIndex(x => x.id == data.id);
-    //     this.users[index] = data;
-    //     let users = [...this.users];
-    //     // this.users$.next(this.users);
-    //     this.store.dispatch(loadUsersSuccessAction({ users }));
-    //   }
+    //   console.log('userOfflineEvent', data)
+
+    //   //     this.store.dispatch(loadUsersSuccessAction({ users }));
+    //   //   }
+    //   // })
+
+    //   // if (data && this.users) {
+    //   //   let index = this.users.findIndex(x => x.id == data.id);
+    //   //   this.users[index] = data;
+    //   //   let users = [...this.users];
+    //   //   // this.users$.next(this.users);
+    //   //   this.store.dispatch(loadUsersSuccessAction({ users }));
+    //   // }
     // })
     // this.chatHubService.userBusyEvent$.subscribe(data => {
-    //   if (data && this.users) {
-    //     let index = this.users.findIndex(x => x.id == data.id);
-    //     this.users[index] = data;
-    //     this.users = [...this.users];
-    //     // this.users$.next(this.users);
-    //     let users = [...this.users];
+    //   console.log('userBusyEvent', data)
 
-    //     this.store.dispatch(loadUsersSuccessAction({ users }));
-    //   }
+    //   // if (data && this.users) {
+    //   //   let index = this.users.findIndex(x => x.id == data.id);
+    //   //   this.users[index] = data;
+    //   //   this.users = [...this.users];
+    //   //   // this.users$.next(this.users);
+    //   //   let users = [...this.users];
+
+    //   //   this.store.dispatch(loadUsersSuccessAction({ users }));
+    //   // }
     // })
 
     this.chatHubService.newMessageEvent$.subscribe(data => {

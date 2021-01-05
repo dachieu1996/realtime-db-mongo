@@ -2,7 +2,7 @@ import { Message } from './../../models/message';
 import { Conversation } from './../../models/conversation';
 import { Action, createAction, props } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
-import { User } from '../../models/user';
+import { User, UserStatus } from '../../models/user';
 
 export enum ConversationActionTypes {
   ConversationRequested = '[Detail Conversation] Conversation Requested',
@@ -42,6 +42,5 @@ export const messagesCancelledAction = createAction(ConversationActionTypes.Mess
 export const sendMessageRequestedAction = createAction(ConversationActionTypes.SendMessageRequested, props<{ message: string, conversation: Conversation }>());
 export const sendMessageFailAction = createAction(ConversationActionTypes.SendMessageFail);
 
-export const allStatusUserAction = createAction(ConversationActionTypes.AllStatusUser);
-export const updateStatusUserSuccessAction = createAction(ConversationActionTypes.UpdateStatusUserSuccess, props<{ user: User }>());
+export const updateStatusUserSuccessAction = createAction(ConversationActionTypes.UpdateStatusUserSuccess, props<{ conversation: Conversation, status: UserStatus }>());
 

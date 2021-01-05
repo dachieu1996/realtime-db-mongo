@@ -1,5 +1,5 @@
 import { DescendingDatetimeSort } from './../../../../helpers/ExtentionMethod';
-import { allConversationsLoadedAction, upsertManyConversationsAction, selectConversationAction, updateConversationSuccessAction } from './conversation.action';
+import { allConversationsLoadedAction, upsertManyConversationsAction, selectConversationAction, updateConversationSuccessAction, updateStatusUserSuccessAction } from './conversation.action';
 import { createReducer, on } from '@ngrx/store';
 import { Conversation } from './../../models/conversation';
 
@@ -42,6 +42,15 @@ export const conversationsReducer = createReducer(
         lastMessage: conversation.lastMessage,
         lastActivityTime: conversation.lastActivityTime,
         participants: conversation.participants,
+      }
+    };
+    return adapter.updateOne(updateConversation, state);
+  }),
+  on(updateStatusUserSuccessAction, (state, { conversation, status }) => {
+    const updateConversation: Update<Conversation> = {
+      id: conversation.id,
+      changes: {
+        status: status
       }
     };
     return adapter.updateOne(updateConversation, state);
