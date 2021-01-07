@@ -35,9 +35,9 @@ namespace Tsoft.ChatService
         {
             services.AddControllers();
             services.AddMvc();
-         
-        // Update-Database
-        var connectionString = Configuration.GetConnectionString("DefaultConnection");
+
+            // Update-Database
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.RegisterChatServiceComponents(Configuration, connectionString);
             services.RegisterCommonServiceComponents(Configuration);
             services.RegisterDbContextBase(Configuration, connectionString);
