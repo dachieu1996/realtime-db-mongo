@@ -18,6 +18,7 @@ using Tsoft.ChatService.Hubs.Services;
 using Tsoft.ChatService.Models;
 using TSoft.Framework.ApiUtils;
 using TSoft.Framework.Authentication;
+using Tsoft.Framework.CacheMemory;
 
 namespace Tsoft.ChatService
 {
@@ -41,6 +42,7 @@ namespace Tsoft.ChatService
             services.RegisterChatServiceComponents(Configuration, connectionString);
             services.RegisterCommonServiceComponents(Configuration);
             services.RegisterDbContextBase(Configuration, connectionString);
+            services.RegisterCacheMemory(Configuration);
             services.RegisterSwaggerServiceComponents(Configuration, Assembly.GetExecutingAssembly());
 
             #region authentication
